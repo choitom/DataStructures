@@ -6,3 +6,4 @@ So far implemented:
   - ArrayList
   - Single Linked-List
   - Double Linked-List
+  - Linked-Stack
