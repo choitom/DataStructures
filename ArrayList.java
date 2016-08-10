@@ -38,6 +38,8 @@ public class ArrayList<E>{
 		if(size >= capacity){
 			ensureCapacity();
 		}
+		System.out.println("list length(inside add): " + list.length);
+		System.out.println("capacity: " + capacity);
 		list[size++] = item;
 		return true;
 	}
@@ -149,7 +151,7 @@ public class ArrayList<E>{
 		capacity = capacity;
 		list = (E[]) new Object[capacity];
 	}
-	
+	/*
 	public static void main(String[] args){
 		ArrayList<Integer> lst = new ArrayList<Integer>();
 		for(int i = 0; i < 10; i++){
@@ -167,5 +169,5 @@ public class ArrayList<E>{
 		
 		System.out.println("The index of 105 is: " + lst.indexOf(105));
 		lst.print();
-	}
+	}*/
 }
