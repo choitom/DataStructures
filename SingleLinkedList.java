@@ -154,5 +154,8 @@ public class SingleLinkedList<E>{
 		lst.remove(1);
 		lst.remove(1);
 		lst.traverse(); // Tom Choi The Googler
+		
+		lst.set(2, "THE");
+		lst.traverse(); // Tom Choi THE Googler
 	}
 }
