@@ -1,107 +1,141 @@
 /*
 	Author	: Tom Choi
-	Date	: 08/08/2016
+	Date	: 08/09/2016
 	
-	Implementation of single linked list with
-		- add
-		- delete
-		- size
-		- traverse
-		- clear
-	methods.
+	Implementation of Single Linked List
+		- add(E item): void
+		- add(int index, E item): void
+		- clear(): void
+		- remove(int index): Node<E>
+		- size(): int
+		- traverse(): void
 */
 
 public class SingleLinkedList<E>{
-	private Node head;
-	private Node current;
+	private static class Node<E>{
+		private Node<E> next;
+		private E item;
+		
+		private Node(E item){
+			this.item = item;
+			this.next = null;
+		}
+		
+		private Node(E item, Node<E> next){
+			this.item = item;
+			this.next = next;
+		}
+	}
+	
+	// variables
+	private Node<E> head;
 	private int size;
 	
 	public SingleLinkedList(){
-		init(null, 0);
+		init(null);
 	}
 	
-	public SingleLinkedList(Node n){
-		init(n, 1);
+	public SingleLinkedList(Node<E> h){
+		init(h);
 	}
 	
-	private void init(Node head, int size){
-		this.head = head;
-		this.size = size;
+	// add an item to the list
+	public void add(E item){
+		add(size, item);
 	}
 	
-	public void add(Node n){
-		if(head == null){
-			head = n;
-			current = n;
-		}else{
-			current.setNext(n);
-			current = n;
-		}size++;
-	}
-	
-	public void delete(E item){
-		Node c = head;
-		Node previous = null;
-		
-		while(c != null){
-			E v = (E)c.getItem();
-			if(v.equals(item)){
-				break;
-			}
-			previous = c;
-			c = c.getNext();
+	// insert an item to a certain index
+	public void add(int index, E item){
+		if(index < 0 || index > size){
+			throw new IndexOutOfBoundsException(Integer.toString(index));
 		}
-		
-		if (c != null){
-			previous.setNext(c.getNext());
-			size--;
+		if(size == 0){
+			addFirst(item);
 		}else{
-			System.out.println("The item to delete (" + item.toString() + 
-								") does not exist.");
+			Node<E> n = getNode(index-1);
+			addAfter(n, item);
 		}
 	}
 	
+	// remove an item in a certain index
+	public Node<E> remove(int index){
+		if(index < 0 || index >= size){
+			throw new IndexOutOfBoundsException(Integer.toString(index));
+		}
+		Node<E> current = head;
+		Node<E> previous = null;
+		Node<E> removed = getNode(index);
+		int i = 0;
+		while(i != index){
+			previous = current;
+			current = current.next;
+			i++;
+		}
+		previous.next = current.next;
+		size--;
+		return removed;
+	}
+	
+	// get the size of the list
 	public int size(){
 		return size;
 	}
 	
-	public void traverse(){
-		Node c = head;
-		while(c != null){
-			System.out.print(c.getItem() + " ");
-			c = c.getNext();
-		}
-		System.out.println();
+	// clear the list
+	public void clear(){
+		init(null);
 	}
 	
-	public void clear(){
+	// print the list
+	public void traverse(){
+		Node<E> n = head;
+		while(n != null){
+			System.out.print(n.item + " ");
+			n = n.next;
+		}System.out.println();
+	}
+	
+	private void addAfter(Node<E> n, E item){
+		Node<E> newNode = new Node<E>(item, n.next);
+		n.next = newNode;
+		size++;
+	}
+	
+	private void addFirst(E item){
+		head = new Node<E>(item, head);
+		size++;
+	}
+	
+	private Node<E> getNode(int index){
+		int i = 0;
+		Node<E> n = head;
+		while(i != index){
+			n = n.next;
+			i++;
+		}
+		return n;
+	}
+	
+	private void init(Node<E> h){
 		size = 0;
-		head = null;
+		head = h;
 	}
 	
 	public static void main(String[] args){
 		SingleLinkedList<String> lst = new SingleLinkedList<String>();
 		
-		String[] arr = {"the", "obvious", "answer", "of", "course",
-						"is", "not", "to", "do", "uncheckd", "cast"};
-		Node[] nodes = new Node[11];
-		
-		// create nodes
-		for(int i = 0; i < arr.length; i++){
-			nodes[i] = new Node<String>(arr[i]);
+		String[] s = {"Tom", "Choi", "The", "Googler"};
+		for(int i = 0; i < s.length; i++){
+			lst.add(s[i]);
 		}
+		lst.traverse(); // Tom Choi The Googler
 		
-		// add to the list
-		for(int i = 0; i < nodes.length; i++){
-			lst.add(nodes[i]);
-		}
+		lst.add(1, "Sun");
+		lst.add(2, "Hyun");
+		lst.traverse();	// Tom Sun Hyun Choi The Googler
 		
-		lst.traverse();
-		System.out.println(lst.size());
-		
-		lst.delete("off");
-		lst.delete("of");
-		lst.traverse();
-		System.out.println(lst.size());
+		lst.remove(1);
+		lst.remove(1);
+		lst.traverse(); // Tom Choi The Googler
 	}
 }

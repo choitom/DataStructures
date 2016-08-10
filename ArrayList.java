@@ -13,6 +13,7 @@ import java.util.Arrays;
 		- set(int index, E newItem): E
 		- size(): int
 		- clear(): void
+		- indexOf(E item): int
 */
 
 public class ArrayList<E>{
@@ -22,7 +23,11 @@ public class ArrayList<E>{
 	private E[] list;
 	
 	public ArrayList(){
-		init();
+		init(INITIAL_CAPACITY);
+	}
+	
+	public ArrayList(int capacity){
+		init(capacity);
 	}
 	
 	/*
@@ -93,6 +98,21 @@ public class ArrayList<E>{
 	}
 	
 	/*
+		Returns the index of an item
+		If the item does not exist, it returns -1
+	*/
+	public int indexOf(E item){
+		int index = -1;
+		for(int i = 0; i < size; i++){
+			if(item.equals(list[i])){
+				index = i;
+				break;
+			}
+		}
+		return index;
+	}
+	
+	/*
 		Return the size of the list
 	*/
 	public int size(){
@@ -112,8 +132,9 @@ public class ArrayList<E>{
 		Clear the list
 	*/
 	public void clear(){
-		init();
+		init(INITIAL_CAPACITY);
 	}
+	
 	
 	/*
 		Double the size of the list
@@ -123,9 +144,9 @@ public class ArrayList<E>{
 		list = Arrays.copyOf(list, capacity);
 	}
 
-	private void init(){
+	private void init(int capacity){
 		size = 0;
-		capacity = INITIAL_CAPACITY;
+		capacity = capacity;
 		list = (E[]) new Object[capacity];
 	}
 	
@@ -143,19 +164,8 @@ public class ArrayList<E>{
 		for(int i = 100; i < 110; i++){
 			lst.add(i);
 		}
-		lst.print();
-		System.out.println(lst.size());
 		
-		lst.add(19, 999);
+		System.out.println("The index of 105 is: " + lst.indexOf(105));
 		lst.print();
-		System.out.println(lst.size());
-		
-		lst.set(0, -10);
-		lst.print();
-		
-		System.out.println(lst.get(0));
-		System.out.println("List cleared");
-		lst.clear();
-		System.out.println(lst.size());
 	}
 }
