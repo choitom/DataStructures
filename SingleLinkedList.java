@@ -6,7 +6,9 @@
 		- add(E item): void
 		- add(int index, E item): void
 		- clear(): void
-		- remove(int index): Node<E>
+		- get(int index): E
+		- remove(int index): E
+		- set(int index, E item): void
 		- size(): int
 		- traverse(): void
 */
@@ -58,7 +60,7 @@ public class SingleLinkedList<E>{
 	}
 	
 	// remove an item in a certain index
-	public Node<E> remove(int index){
+	public E remove(int index){
 		if(index < 0 || index >= size){
 			throw new IndexOutOfBoundsException(Integer.toString(index));
 		}
@@ -73,7 +75,22 @@ public class SingleLinkedList<E>{
 		}
 		previous.next = current.next;
 		size--;
-		return removed;
+		return removed.item;
+	}
+	
+	// getter and setter
+	public E get(int index){
+		if(index < 0 || index >= size){
+			throw new IndexOutOfBoundsException(Integer.toString(index));
+		}
+		return getNode(index).item;
+	}
+	
+	public void set(int index, E item){
+		if(index < 0 || index >= size){
+			throw new IndexOutOfBoundsException(Integer.toString(index));
+		}
+		getNode(index).item = item;
 	}
 	
 	// get the size of the list
