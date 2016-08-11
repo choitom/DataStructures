@@ -1,7 +1,9 @@
 # DataStructures
 
-DataStructures Repository for Self Studying the Data Structures
+DataStructures Repository for Self Studying
+for Data Structures as well as Recursion
 (Textbook used: DataStructures by Koffman & Wolfgang)
+
 So far implemented:
   - ArrayList
   - Single-Linked List
