@@ -1,24 +1,10 @@
-import java.util.EmptyStackException;
-
-/*
-	Author	: Tom Choi
-	Date	: 08/09/2016
-	
-	Implementation of Linked Stack
-		- empty(): boolean
-		- peek(): E
-		- pop(): E
-		- push(E obj): E
-*/
-
 public class LinkedStack<E> implements Stack<E>{
 	private static class Node<E>{
-		private E data;
-		private Node<E> next = null;
-		private Node<E> previous = null;
+		private Node<E> next = null;;
+		private E item;
 		
-		private Node(E data){
-			this.data = data;
+		private Node(E item){
+			this.item = item;
 		}
 	}
 	
@@ -35,48 +21,43 @@ public class LinkedStack<E> implements Stack<E>{
 	
 	// returns the top item of the stack
 	public E peek(){
-		if(empty()){
-			throw new EmptyStackException();
+		if (top == null){
+			System.err.println("The stack is empty.");
+			return null;
 		}
-		return top.data;
+		return top.item;
 	}
 	
 	// removes and returns the top item of the stack
 	public E pop(){
-		if(empty()){
-			throw new EmptyStackException();
-		}
-		E popped = top.data;
-		if(top.previous != null){
-			top.previous.next = null;
-		}
-		top = top.previous;
-		return popped;
+		Node<E> popped = top;
+		top = top.next;
+		return popped.item;
 	}
 	
 	// add an item on the top of the stack
 	public E push(E obj){
-		Node<E> n = new Node<E>(obj);
+		Node<E> newNode = new Node<E>(obj);
 		if(top == null){
-			top = n;
+			top = newNode;
 		}else{
-			n.previous = top;
-			top.next = n;
-			top = n;
+			newNode.next = top;
+			top = newNode;
 		}
-		return obj;
+		return newNode.item;
 	}
 	
 	public static void main(String[] args){
-		LinkedStack<Integer> lst = new LinkedStack<Integer>();
-		for(int i = 0; i < 10; i++){
-			lst.push(i);
+		LinkedStack<String> stack = new LinkedStack<String>();
+		String[] str = {"Googler", "The", "Choi", "Tom"};
+		for(int i = 0; i < str.length; i++){
+			System.out.print(stack.push(str[i]) + " ");
 		}
-		System.out.println(lst.empty());
-		System.out.println(lst.peek());
-		for(int i = 0; i < 10; i++){
-			System.out.print(lst.pop() + " ");
+		System.out.println("\nPeek: " + stack.peek());
+		for(int i = 0; i < str.length; i++){
+			System.out.print(stack.pop() + " ");
 		}
-		System.out.println("\n"+ lst.empty());
+		System.out.println("\nEmpty: " + stack.empty());
+		
 	}
 }
