@@ -36,10 +36,8 @@ public class ParenChecker{
 		}
 
 		if(balanced && stack.empty()){
-			System.out.println("The expression\n\t" + str + "\nis balanced");
 			return true;
 		}else{
-			System.out.println("The expression\n\t" + str + "\nis not balanced");
 			return false;
 		}
 	}
