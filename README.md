@@ -6,8 +6,5 @@ So far implemented:
   - ArrayList
   - Single-Linked List
   - Double-Linked List
-  - Linked-Stack
-	-> Postfix Evaluator
-	-> Infix Evaluator
-	-> Infix Compiler
+  - Linked-Stack :Postfix Evaluator, Infix Evaluator, Infix Compiler
   - Single-Linked Queue
