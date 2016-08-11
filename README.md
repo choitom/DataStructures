@@ -2,6 +2,7 @@
 
 DataStructures Repository for Self Studying the Data Structures
 (Textbook used: DataStructures by Koffman & Wolfgang)
+
 So far implemented:
   - ArrayList
   - Single-Linked List
