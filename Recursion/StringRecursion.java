@@ -6,6 +6,16 @@
 */
 
 public class StringRecursion{
+	
+	// passes an intermediate value until it reaches the end
+	public int lengthTailRecursion(String str, int i){
+		if(str == null || str.length() == 0){
+			return i;
+		}else{
+			return lengthTailRecursion(str.substring(1) , ++i);
+		}
+	}
+	
 	public int length(String str){
 		if(str == null || str.length() == 0){
 			return 0;
@@ -38,6 +48,9 @@ public class StringRecursion{
 		
 		int strLength = sr.length(str);
 		System.out.println(strLength); // 11
+		
+		int strLength2 = sr.lengthTailRecursion(str , 0);
+		System.out.println(strLength2);
 		
 		sr.print(str);	// hello world
 		System.out.println();
