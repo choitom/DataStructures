@@ -12,7 +12,7 @@ public class StringRecursion{
 		if(str == null || str.length() == 0){
 			return i;
 		}else{
-			return lengthTailRecursion(str.substring(1) , ++i);
+			return lengthTailRecursion(str.substring(1) , i + 1);
 		}
 	}
 	

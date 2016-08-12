@@ -44,7 +44,7 @@ public class ReverseLinearSearch{
 		
 		// recursive case
 		else{
-			return reverseSearchHelper(arr, target, --length);
+			return reverseSearchHelper(arr, target, length - 1);
 		}
 	}
 }

@@ -49,7 +49,7 @@ public class RecursiveSum{
 		if(index == arr.length){
 			return partialSum;
 		}else{
-			return findTailSum(arr, partialSum + arr[index], ++index);
+			return findTailSum(arr, partialSum + arr[index], index + 1);
 		}
 	}
 	
@@ -57,7 +57,7 @@ public class RecursiveSum{
 		if(index == arr.length){
 			return 0;
 		}else{
-			return arr[index] + findSum(arr, ++index);
+			return arr[index] + findSum(arr, index + 1);
 		}
 	}
 }
