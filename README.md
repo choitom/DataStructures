@@ -12,4 +12,5 @@ So far implemented:
   - Linked-Stack: Postfix Evaluator, Infix Evaluator, Infix Compiler
   - Single-Linked Queue
   - Circular Array Queue
+  - Priority Queue
   - Binary Search Tree
