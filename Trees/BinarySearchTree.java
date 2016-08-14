@@ -1,7 +1,34 @@
+/**
+	Author	: Tom Choi
+	Date	: 08/13/2016
+	
+	Implementation of Binary Search Tree
+		- root				 : Node<E>
+		- addReturn			 : boolean
+		- deleteReturn		 : E
+		
+		+ add(E item)		 : boolean
+		+ contains(E item)	 : boolean
+		+ delete(E item)	 : E
+		+ find(E item)		 : E
+		+ inorderTraverse()	 : void
+		+ remove(E item)	 : boolean
+		+ preorderTraverse() : void
+		+ postorderTraverse(): void
+*/
+
 public class BinarySearchTree<E extends Comparable<E>> implements SearchTree<E>{
+	/**
+	* Node class for binary tree
+	*/
 	private static class Node<E>{
-		private Node<E> left;
-		private Node<E> right;
+		/** left child */
+		private Node<E> left = null;
+		
+		/** right child */
+		private Node<E> right = null;
+		
+		/** data to store */
 		private E item;
 		
 		private Node(E item){
@@ -9,13 +36,14 @@ public class BinarySearchTree<E extends Comparable<E>> implements SearchTree<E>{
 		}
 	}
 	
+	
+	/** the root of the tree */
 	private Node<E> root;
+	
 	private boolean addReturn;
 	private E deleteReturn;
 	
-	/*
-		CONSTRUCTORS
-	*/
+	/** constructors of the tree */
 	public BinarySearchTree(){
 		this.root = null;
 	}
@@ -25,231 +53,299 @@ public class BinarySearchTree<E extends Comparable<E>> implements SearchTree<E>{
 	}
 	
 	
-	/*
-		PUBLIC METHODS
+	/**
+	* Returns true if an item is added to a tree
+	* Otherwise, return false
+	*
+	* @param	item	an item to add to the tree
+	* @return			whether an item is added or not
 	*/
-	
-	// Inserts item it belongs in the tree
-	// Returns true if item is inserted
-	// Otherwise, return false
 	public boolean add(E item){
 		root = add(item, root);
 		return addReturn;
 	}
 	
-	// Returns true if item is found in the tree
-	public boolean contains(E item){
-		E found = find(item);
-		return (found != null) ? true : false;
+	/**
+	* Private helper method of add(E item)
+	* Recursively searches the appropriate place to add a node
+	*
+	* @param	item	an item to add to the tree
+	* @param	root	the node to compare/find the place to add
+	* @return			the node with an item added
+	*/
+	private Node<E> add(E item, Node<E> root){
+		/** found a place to store the item */
+		if(root == null){
+			addReturn = true;
+			root = new Node<E>(item);
+			return root;
+		}
+		
+		int comparison = item.compareTo(root.item);
+		
+		/** item to add already exists in the tree */
+		if(comparison == 0){
+			addReturn = false;
+			return root;
+		}
+		/** item is less -> add to the left of the root */
+		else if(comparison < 0){
+			root.left = add(item, root.left);
+			return root;
+		}
+		/** item is greater -> add to the right of the root */
+		else{
+			root.right = add(item, root.right);
+			return root;
+		}
 	}
 	
-	// Returns a reference to the data in the node
-	// that is equal to the item. Otherwise, return null
+	/**
+	* Returns true if an item exists in a tree
+	* If not, return false
+	*
+	* @param	item	an item to search in the tree
+	* @return			whether an item is in a tree or not
+	*/
+	public boolean contains(E item){
+		return (find(item) != null) ? true : false;
+	}
+	
+	/**
+	* Returns the reference of an item in the tree if found
+	* Otherwise, return null
+	*
+	* @param	item	an item to find in the tree
+	* @return			the reference to the item in the tree
+	*/
 	public E find(E item){
 		E found = find(item, root);
 		return found;
 	}
 	
-	// Removes item (if found) from tree and returns it
-	// Otherwise, return null
+	/**
+	* Private helper method of find(E item)
+	* Search an item in the tree and returns its reference
+	*
+	* @param	item	an item to find in the tree
+	* @param	root	the start node
+	* @return			the reference to the item in the tree
+	*/
+	private E find(E item, Node<E> root){
+		/** item not found */
+		if(root == null){
+			return null;
+		}
+		
+		int comparison = item.compareTo(root.item);
+		
+		/** item found */
+		if(comparison == 0){
+			return root.item;
+		}
+		/** item less than that of root */
+		else if(comparison < 0){
+			return find(item, root.left);
+		}
+		/** item greater than that of root */
+		else{
+			return find(item, root.right);
+		}
+	}
+	
+	
+	/**
+	* Delete an item and returns it.
+	* If the item to delete is not in the tree, return null
+	*
+	* @param	item	an item to delete
+	* @return			an item deleted
+	*/
 	public E delete(E item){
 		root = delete(item, root);
 		return deleteReturn;
 	}
-	
-	// Removes item (if found) from tree and returns true
-	// Otherwise, return false
-	public boolean remove(E item){
-		delete(item);
-		return (deleteReturn != null) ? true : false;
-	}
-	
-	// Prints items in a tree in
-	// node -> left -> right order
-	public void preorderTraverse(){
-		preorderTraverseHelper(root);
-		System.out.println();
-	}
-	
-	// Prints items in a tree in
-	// left -> node -> right order
-	public void inorderTraverse(){
-		inorderTraverseHelper(root);
-		System.out.println();
-	}
-	
-	// Prints items in a tree in
-	// left -> right -> node order
-	public void postorderTraverse(){
-		postorderTraverseHelper(root);
-		System.out.println();
-	}
-	
-	
-	/*
-		PRIVATE METHODS
+
+	/**
+	* Private helper method for delete(E item)
+	*
+	* @param	item	an item to delete
+	* @param	root	the start node
+	* @return			deleted node
 	*/
-	private Node<E> add(E item, Node<E> localRoot){
-		// found a place to add
-		if(localRoot == null){
-			addReturn = true;
-			return new Node<E>(item);
-		}
-		
-		int comparison = item.compareTo(localRoot.item);
-		
-		// item already exists
-		if(comparison == 0){
-			addReturn = false;
-			return localRoot;
-		}
-		// item less than the local root item
-		else if(comparison < 0){
-			localRoot.left = add(item, localRoot.left);
-			return localRoot;
-		}
-		// item greater than the local root item
-		else{
-			localRoot.right = add(item, localRoot.right);
-			return localRoot;
-		}
-	}
-	
-	private E find(E item, Node<E> localRoot){
-		// item not found
-		if(localRoot == null){
-			return null;
-		}
-		
-		int comparison = item.compareTo(localRoot.item);
-		
-		// item found
-		if(comparison == 0){
-			return localRoot.item;
-		}
-		// item less than the node item: search left
-		else if(comparison < 0){
-			return find(item, localRoot.left);
-		}
-		// item greater than the node item: search right
-		else{
-			return find(item, localRoot.right);
-		}
-	}
-	
-	private Node<E> delete(E item, Node<E> localRoot){
-		// item not found
-		if(localRoot == null){
+	private Node<E> delete(E item, Node<E> root){
+		/** the item to delete does not exist */
+		if(root == null){
 			deleteReturn = null;
-			return localRoot;
+			return root;
 		}
 		
-		int comparison = item.compareTo(localRoot.item);
+		int comparison = item.compareTo(root.item);
 		
-		// item less than the local root item: search left
+		/** delete from the left subtree */
 		if(comparison < 0){
-			localRoot.left = delete(item, localRoot.left);
-			return localRoot;
+			root.left = delete(item, root.left);
+			return root;
 		}
-		// item greater than the local root item: search right
+		/** delete from the right subtree */
 		else if(comparison > 0){
-			localRoot.right = delete(item, localRoot.right);
-			return localRoot;
+			root.right = delete(item, root.right);
+			return root;
 		}
-		// item found
+		/** the node to delete is found */
 		else{
-			deleteReturn = localRoot.item;
+			deleteReturn = root.item;
 			
-			// leaf
-			if(localRoot.left == null && localRoot.right == null){
+			/** the node is a leaf */
+			if(root.left == null && root.right == null){
 				return null;
 			}
-			// one left child
-			else if(localRoot.left != null && localRoot.right == null){
-				return localRoot.left;
+			/** the node has one left child */
+			else if(root.left != null && root.right == null){
+				return root.left;
 			}
-			// one right child
-			else if(localRoot.left == null && localRoot.right != null){
-				return localRoot.right;
+			/** the node has one right child */
+			else if(root.left == null && root.right != null){
+				return root.right;
 			}
-			// two children
+			/** the node has two children */
 			else{
-				if(localRoot.left.right == null){
-					localRoot.item = localRoot.left.item;
-					localRoot.left = localRoot.left.left;
-					return localRoot;
-				}else{
-					localRoot.item = findRightmost(localRoot.left);
-					return localRoot;
+				/**
+				* the left child becomes the local root
+				*/
+				if(root.left.right == null){
+					root.item = root.left.item;
+					root.left = root.left.left;
+					return root;
+				}
+				/**
+				* find the left-rightmost node and replace the local root's
+				* item with that of left-rightmost node.
+				*/
+				else{
+					root.item = findRightmost(root.left);
+					return root;
 				}
 			}
 		}
 	}
 	
+	/**
+	* Finds the rightmost child of a node
+	*
+	* @param	node	the start node
+	* @return			the reference to the item of the rightmost child
+	*/
 	private E findRightmost(Node<E> node){
-		// rightmost found
+		/** the rightmost child found */
 		if(node.right.right == null){
 			E rightmost = node.right.item;
 			node.right = node.right.left;
 			return rightmost;
-		}
-		// not found
-		else{
+		}else{
 			return findRightmost(node.right);
 		}
 	}
 	
-	private void preorderTraverseHelper(Node<E> root){
+	/**
+	* Delete an item and returns true if deleted.
+	* If the item to delete is not in the tree, return false
+	*
+	* @param	item	an item to delete
+	* @return			whether an item is deleted or not
+	*/
+	public boolean remove(E item){
+		return (delete(item) != null) ? true : false;
+	}
+	
+	/**
+	* Traverse the tree in the following order
+	* root -> left subtree -> right subtree
+	*/
+	public void preorderTraverse(){
+		preorderHelper(root);
+		System.out.println();
+	}
+	
+	/**
+	* Private preorderTraverse() helper method
+	*
+	* @param	root	the start node
+	*/
+	private void preorderHelper(Node<E> root){
 		if(root != null){
 			System.out.print(root.item.toString() + " ");
-			preorderTraverseHelper(root.left);
-			preorderTraverseHelper(root.right);
+			preorderHelper(root.left);
+			preorderHelper(root.right);
 		}
 	}
 	
-	private void inorderTraverseHelper(Node<E> root){
+	/**
+	* Traverse the tree in the following order
+	* left subtree -> root -> right subtree
+	*/
+	public void inorderTraverse(){
+		inorderHelper(root);
+		System.out.println();
+	}
+	
+	/**
+	* Private inroderTraverse() helper method
+	*
+	* @param	root	the start node
+	*/
+	private void inorderHelper(Node<E> root){
 		if(root != null){
-			inorderTraverseHelper(root.left);
-			System.out.print(root.item + " ");
-			inorderTraverseHelper(root.right);
+			inorderHelper(root.left);
+			System.out.print(root.item.toString() + " ");
+			inorderHelper(root.right);
 		}
 	}
 	
-	private void postorderTraverseHelper(Node<E> root){
+	/**
+	* Traverse the tree inthe following order
+	* left subtree -> right usbtree -> root
+	*/
+	public void postorderTraverse(){
+		postorderHelper(root);
+		System.out.println();
+	}
+	
+	/**
+	* Private postorderTraverse() helper method
+	*
+	* @param	root	the start node
+	*/
+	private void postorderHelper(Node<E> root){
 		if(root != null){
-			postorderTraverseHelper(root.left);
-			postorderTraverseHelper(root.right);
-			System.out.print(root.item + " ");
+			postorderHelper(root.left);
+			postorderHelper(root.right);
+			System.out.print(root.item.toString() + " ");
 		}
 	}
 	
 	
 	public static void main(String[] args){
 		BinarySearchTree<String> bst = new BinarySearchTree<String>();
-		String[] tom = {"Tom", "Sun", "Hyun", "Choi", "The", "Googler", "Choi", "You Can Do It"};
 		
+		String[] tom = {"Tom", "Sun", "Hyun", "Choi", "The", "Googler",
+						"Yo", "Hi"};
+						
 		for(int i = 0; i < tom.length; i++){
-			boolean added = bst.add(tom[i]);
+			bst.add(tom[i]);
 		}
 		
 		bst.preorderTraverse();
 		bst.inorderTraverse();
 		bst.postorderTraverse();
 		
-		bst.delete("Sun");
-		bst.delete("Hyun");
+		System.out.println(bst.contains("Tom"));	// true
+		System.out.println(bst.contains("Hello"));	// false
+		System.out.println(bst.find("Hyun"));		// Hyun
+		
+		System.out.println(bst.delete("Yo"));
+		System.out.println(bst.remove("Hi"));
 		
 		bst.preorderTraverse();
-		bst.inorderTraverse();
-		bst.postorderTraverse();
-		
-		System.out.println(bst.contains("Sun"));
-		
-		bst.add("Sun");
-		bst.add("Hyun");
-		
-		bst.preorderTraverse();
-		bst.inorderTraverse();
-		bst.postorderTraverse();
 	}
 }

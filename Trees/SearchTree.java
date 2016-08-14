@@ -1,34 +1,65 @@
 public interface SearchTree<E>{
 	
-	// Inserts item it belongs in the tree
-	// Returns true if item is inserted
-	// Otherwise, return false
+	/**
+	* Returns true if an item is added to a tree
+	* Otherwise, return false
+	*
+	* @param	item	an item to add to the tree
+	* @return			whether an item is added or not
+	*/
 	public boolean add(E item);
 	
-	// Returns true if item is found in the tree 
+	/**
+	* Returns true if an item exists in a tree
+	* If not, return false
+	*
+	* @param	item	an item to search in the tree
+	* @return			whether an item is in a tree or not
+	*/
 	public boolean contains(E item);
 	
-	// Returns a reference to the data in the node
-	// that is equal to the item. Otherwise, return null
+	/**
+	* Returns the reference of an item in the tree if found
+	* Otherwise, return null
+	*
+	* @param	item	an item to find in the tree
+	* @return			the reference to the item in the tree
+	*/
 	public E find(E item);
 	
-	// Removes item (if found) from tree and returns it
-	// Otherwise, return null
+	/**
+	* Delete an item and returns it.
+	* If the item to delete is not in the tree, return null
+	*
+	* @param	item	an item to delete
+	* @return			an item deleted
+	*/
 	public E delete(E item);
 
-	// Removes item (if found) from tree and returns true
-	// Otherwise, return false
+	/**
+	* Delete an item and returns true if deleted.
+	* If the item to delete is not in the tree, return false
+	*
+	* @param	item	an item to delete
+	* @return			whether an item is deleted or not
+	*/
 	public boolean remove(E item);
 	
-	// Prints items in a tree in
-	// node -> left -> right order
+	/**
+	* Traverse the tree in the following order
+	* root -> left subtree -> right subtree
+	*/
 	public void preorderTraverse();
 	
-	// Prints items in a tree in
-	// left -> node -> right order
+	/**
+	* Traverse the tree in the following order
+	* left subtree -> root -> right subtree
+	*/
 	public void inorderTraverse();
 	
-	// Prints items in a tree in
-	// left -> right -> node order
+	/**
+	* Traverse the tree inthe following order
+	* left subtree -> right usbtree -> root
+	*/
 	public void postorderTraverse();
 }
