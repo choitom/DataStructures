@@ -52,18 +52,6 @@ public class PriorityQueue<E extends Comparable<E>> implements Queue<E>{
 	}
 	
 	/**
-	* Swaps two items in the queue
-	*
-	* @param	parent	the index of the parent node
-	* @param	child	the index of the child node
-	*/
-	private void swap(int parent, int child){
-		E temp = queue.get(parent);
-		queue.set(parent, queue.get(child));
-		queue.set(child, temp);
-	}
-	
-	/**
 	* Remove an item from the priority queue
 	*
 	* @return	the item with the smallest prioirty value or null if empty
@@ -123,24 +111,53 @@ public class PriorityQueue<E extends Comparable<E>> implements Queue<E>{
 		return queue.get(0);
 	}
 	
+	/**
+	* Return the size of the priority queue
+	*
+	* @return	the size of the queue
+	*/
+	public int size(){
+		return queue.size();
+	}
+	
+	/**
+	* Find if the priority queue is empty or not
+	*
+	* @return	true if queue is empty; otherwise, false
+	*/
+	public boolean isEmpty(){
+		return (queue.size() == 0) ? true : false;
+	}
+	
+	
+	/**
+	* Swaps two items in the queue
+	*
+	* @param	parent	the index of the parent node
+	* @param	child	the index of the child node
+	*/
+	private void swap(int parent, int child){
+		E temp = queue.get(parent);
+		queue.set(parent, queue.get(child));
+		queue.set(child, temp);
+	}
 	
 	public static void main(String[] args){
-		PriorityQueue<Integer> q = new PriorityQueue<Integer>();
-		PriorityQueue<String> q2 = new PriorityQueue<String>();
+		PriorityQueue<String> q = new PriorityQueue<String>();
 		String[] arr = {"this", "is", "the", "house", "that", "jack", "built"};
 		
-		for(int i = 10; i >= 0; i--){
-			q.offer(i);
+		for(int i = 0; i < arr.length; i++){
+			q.offer(arr[i]);
 		}
-		for(int i = 0; i < 5; i++){
-			System.out.print(q.poll() + " ");
-		}System.out.println();
+		
+		System.out.println("Size of q: " + q.size());
+		System.out.println("Is q empty? " + q.isEmpty());
 		
 		for(int i = 0; i < arr.length; i++){
-			q2.offer(arr[i]);
-		}
-		for(int i = 0; i < arr.length; i++){
-			System.out.print(q2.poll()+ " ");
+			System.out.print(q.poll()+ " ");
 		}System.out.println();
+		
+		System.out.println("Size of q: " + q.size());
+		System.out.println("Is q empty? " + q.isEmpty());
 	}
 }
