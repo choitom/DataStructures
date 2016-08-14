@@ -4,9 +4,11 @@
 	
 	Implementation of Priority Queue using heap
 		- queue			: ArrayList<E>
+		+ isEmpty()		: boolean
 		+ offer(E item) : boolean
-		+ remove()		: E
 		+ peek()		: E
+		+ remove()		: E
+		+ size()		: int
 */
 
 import java.util.ArrayList;
