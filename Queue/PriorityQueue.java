@@ -134,5 +134,16 @@ public class PriorityQueue<E extends Comparable<E>> implements Queue<E>{
 		for(int i = 0; i < 5; i++){
 			System.out.println(q.poll());
 		}
+		
+		PriorityQueue<String> q2 = new PriorityQueue<String>();
+		
+		String[] arr = {"this", "is", "the", "house", "that", "jack", "built"};
+		for(int i = 0; i < arr.length; i++){
+			q2.offer(arr[i]);
+		}
+		
+		for(int i = 0; i < arr.length; i++){
+			System.out.println(q2.poll());
+		}
 	}
 }
