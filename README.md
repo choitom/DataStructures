@@ -14,3 +14,4 @@ So far implemented:
   - Circular Array Queue
   - Priority Queue
   - Binary Search Tree
+  - Hash Table (Open Addressing)
