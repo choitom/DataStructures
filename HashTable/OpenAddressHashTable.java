@@ -1,81 +1,48 @@
-import java.util.*;
-
 /**
 	Author	: Tom Choi
-	Date	: 08/14/2016
+	Date	: 08/15/2016
 	
-	Impelementation of Hash Table with Open Addressing
+	Implementation of Hash Table with
+	Open Addressing and Quadratic Probing
 		- DELETED				: Entry<K,V>
 		- INIT_SIZE				: int
-		- LOAD_THRESHOLD		: double
+		- LOAD_LIMIT			: double
 		- numKeys				: int
-		- numDelete				: int
+		- numDeletes			: int
 		- table					: Entry<K,V>[]
 		
 		+ get(K key)			: V
 		+ isEmpty()				: boolean
+		+ print()				: void
 		+ put(K key, V value)	: V
 		+ remove(K key)			: V
-		+ print()				: void
 		+ size()				: int
 */
 
-public class OpenAddressHashTable<K, V> implements HashTable<K,V>{
-	/** The entry that stores the value and its key */
-	private static class Entry<K, V>{
+public class OpenAddressHashTable<K,V> implements HashTable<K,V>{
+	
+	/** a pair of key and value */
+	private static class Entry<K,V>{
 		private K key;
 		private V value;
 		
-		/** Initialize a new key-value pair */
 		private Entry(K key, V value){
 			this.key = key;
 			this.value = value;
 		}
-		
-		/**
-		* Sets a new value
-		*
-		* @param	value	a new value
-		* @return	returns the old value
-		*/
-		private V setValue(V value){
-			V old = this.value;
-			this.value = value;
-			return old;
-		}
-		
-		/**
-		* Retrieves the value
-		*
-		* @return	the value of the pair
-		*/
-		private V getValue(){
-			return this.value;
-		}
-		
-		/**
-		* Retrieves the key
-		*
-		* @return	the key of the pair
-		*/
-		private K getKey(){
-			return this.key;
-		}
 	}
 	
-	
-	/** Data field */
+	/** instance variables */
 	private Entry<K,V>[] table;
+	private int numKeys;
+	private int numDeletes;
 	
 	private final int INIT_SIZE = 101;
-	private final double LOAD_THRESHOLD = 0.75;
+	private final double LOAD_LIMIT = 0.75;
 	private final Entry<K,V> DELETED = new Entry<K,V>(null, null);
 	
-	private int numKeys;	// keep track of the number of live keys
-	private int numDelete;	// keep track of the number of deleted keys
 	
-	
-	/** Constructor */
+	/** constructor */
 	public OpenAddressHashTable(){
 		init(INIT_SIZE);
 	}
@@ -94,15 +61,15 @@ public class OpenAddressHashTable<K, V> implements HashTable<K,V>{
 	*/
 	public V get(K key){
 		int index = find(key);
-		if(table[index] != null){
-			return table[index].value;
-		}else{
+		if(table[index] == null){
 			return null;
+		}else{
+			return table[index].value;
 		}
 	}
 	
 	/**
-	* See if the hash table is empty or not
+	* Sees if the hash table is empty or not
 	*
 	* @return	true if the table is empty; otherwise, false
 	*/
@@ -119,25 +86,21 @@ public class OpenAddressHashTable<K, V> implements HashTable<K,V>{
 	* @return	value if it is replaced; otherwise, null
 	*/
 	public V put(K key, V value){
+		/** find the index for the key */
 		int index = find(key);
 		
-		/** the index is empty -> insert a new entry */
 		if(table[index] == null){
-			table[index] = new Entry<K, V>(key, value);
+			table[index] = new Entry<K,V>(key,value);
 			numKeys++;
-			
-			/** check whether rehash is needed or not */
-			double loadFactor = (double) (numKeys + numDelete)/table.length;
-			if(loadFactor > LOAD_THRESHOLD){
+			double loadFactor = (double)(numKeys + numDeletes)/table.length;
+			if(loadFactor > LOAD_LIMIT){
 				rehash();
 			}
 			return null;
 		}
-		
-		/** the index is occupied -> replace the value */
 		V old = table[index].value;
 		table[index].value = value;
-		return old;	
+		return old;
 	}
 	
 	/**
@@ -154,22 +117,13 @@ public class OpenAddressHashTable<K, V> implements HashTable<K,V>{
 		}
 		V removed = table[index].value;
 		table[index] = DELETED;
-		numDelete++;
 		numKeys--;
+		numDeletes++;
 		return removed;
 	}
 	
 	/**
-	* Returns the size of the table
-	*
-	* @return	the size of the table
-	*/
-	public int size(){
-		return numKeys;
-	}
-	
-	/**
-	* Prints out the hash table
+	* Print the hash table
 	*/
 	public void print(){
 		for(int i = 0; i < table.length; i++){
@@ -181,119 +135,113 @@ public class OpenAddressHashTable<K, V> implements HashTable<K,V>{
 				System.out.print("[" + table[i].value.toString() + "] ");
 			}
 		}
-		System.out.println("\nThe rate of occupancy: " +
-			(double)(numKeys + numDelete)/table.length);
+		System.out.println("\nOccupancy: " + (double)(numKeys+numDeletes)/table.length);
 	}
-
 	
 	/**
-	* Initialize the hash table and other instance variables
+	* Returns the size of the table
 	*
-	* @param	size	the initial size of the hash table
+	* @return	the size of the table
+	*/
+	public int size(){
+		return numKeys;
+	}
+	
+	
+	/**
+	* Initialize instance variables
+	* 
+	* @param	size	the initial size of the table
 	*/
 	private void init(int size){
 		table = new Entry[size];
 		numKeys = 0;
-		numDelete = 0;
+		numDeletes = 0;
 	}
 	
-	
 	/**
-	* Finds the hash code of a key
+	* Calculates the hash code of the key using the following hash function
+	* 	-> hash code = 31^(n-1) * c1 + 31^(n-2) * c2 + ...
 	*
-	* @param	key		the key to find its hash code
+	* @param	key		the key for a hash code
 	* @return	the hash code of the key
 	*/
 	private int hashCode(K key){
 		String keyStr = String.valueOf(key);
-		int len = keyStr.length();
+		int i;
 		int code = 0;
-		for(int i = len - 1; i >= 0; i--){
-			int c = (int)keyStr.charAt(i);
-			code = code + (int)Math.pow(31, i) * c;
+		for(i = keyStr.length()-1; i >= 0; i--){
+			code += Math.pow(31, i) * (int)keyStr.charAt(i);
 		}
 		return code;
 	}
 	
 	/**
-	* Finds either the target key or the first empty slot
-	* in the search chain using quadratic probing
+	* Find the index of the key. Use quadratic probing to resolve collisions
 	*
-	* @param	key		the key to search
-	* @return	index in the table
+	* @param	key		the key to convert
+	* @return	the index of the key in the table
 	*/
 	private int find(K key){
 		int index = hashCode(key) % table.length;
 		
-		/** if index is less than 0, make it positive */
-		while(index < 0){
+		if(index < 0){
 			index += table.length;
 		}
-
+		
 		int quadratic = 1;
 		while((table[index] != null) &&
-			  !(key.equals(table[index].key))){
+			  (!key.equals(table[index].key))){
 			index = (index + quadratic * quadratic) % table.length;
+			quadratic++;
 		}
 		return index;
 	}
 	
 	/**
-	* Double the table size when more than 75% of the table
-	* is filled by both live and deleted keys
+	* Double the table size and move all the keys
+	* that are not deleted to the new table
 	*/
 	private void rehash(){
-		Entry<K, V>[] old = table;
+		numKeys = 0;
+		numDeletes = 0;
+		Entry<K,V>[] old = table;
 		table = new Entry[2 * table.length + 1];
 		
-		/** reinsert all items in old table into the new one */
-		numKeys = 0;
-		numDelete = 0;
-		for(int i = 0; i < old.length; i++){
-			if((old[i] != null) && (old[i] != DELETED)){
+		int i;
+		for(i = 0; i < old.length; i++){
+			if(old[i] != DELETED && old[i] != null){
 				put(old[i].key, old[i].value);
 			}
 		}
 	}
-		
 	
-	/** Testing codes */
+	/** Test codes */
 	public static void main(String[] args){
-		OpenAddressHashTable<String, Integer> hash = new OpenAddressHashTable<String, Integer>();
-		System.out.println(hash.isEmpty());
-		System.out.println(hash.size());
+		OpenAddressHashTable<String, Integer> h = new OpenAddressHashTable<String, Integer>(10);
+		String[] keys = new String[100];
+		int[] values = new int[100];
 		
-		String[] keys = new String[200];
-		int[] values = new int[keys.length];
-		
-		/** randomly generate keys */
-		Random rand = new Random();
-		int i;
-		int randNum;
-		for(i = 0; i < keys.length; i++){
-			randNum = rand.nextInt(65536);
-			keys[i] = String.valueOf((char)randNum);
+		/** initialize 100 keys and values */
+		for(int i = 0; i < keys.length; i++){
+			keys[i] = String.valueOf(i);
 		}
 		
-		/** values from 0 ~ 199 */
-		for(i = 0; i < values.length; i++){
+		for(int i = 0; i < values.length; i++){
 			values[i] = i;
 		}
 		
-		for(i = 0; i < keys.length; i++){
-			hash.put(keys[i], values[i]);
+		/** add 100 pairs of keys and values */
+		for(int i = 0; i < keys.length; i++){
+			h.put(keys[i], values[i]);
 		}
+		h.print();
+		System.out.println(h.get(keys[10]));
 		
-		hash.print();
-		System.out.println(hash.isEmpty());
-		System.out.println(hash.size());
-		
-		/** delete the values associated with the first 10 keys */
-		System.out.print("Removed: ");
-		for(i = 0; i < 10; i++){
-			System.out.print(hash.remove(keys[i]) + " ");
-		}System.out.println();
-		
-		hash.print();
+		/** delete the first 10 keys */
+		for(int i = 0; i < 10; i++){
+			h.remove(keys[i]);
+		}
+		h.print();
 	}
 }
