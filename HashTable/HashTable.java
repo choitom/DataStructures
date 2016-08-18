@@ -1,58 +1,242 @@
 /**
-	The purpose of Hash Table is
-		-> speedy insertion, deletion and look-up
-			
-	Comparisons with other data structures (Sorted Array & Binary Tree)
+	Author	: Tom Choi
+	Date	: 08/18/2016
 	
-					Insert	Remove	Search
-	Hash Table		O(1)	O(1)	O(1)
-	Binary Tree		O(logn)	O(logn)	O(logn)
-	Sorted Array	O(n)	O(n)	O(n)
-	
-	Hash Functions
-		-> calculate the index to store in the hash function
+	Implementation of Hash Table with
+	Open Addressing and Quadratic Probing
 */
 
-public interface HashTable<K, V>{
+import java.util.*;
+
+public class HashTable<K,V> implements HashMap<K,V>{
+	/** A pair of key and value */
+	private static class Entry<K,V>{
+		private K key;
+		private V value;
+		
+		private Entry(K key, V value){
+			this.key = key;
+			this.value = value;
+		}
+		
+		private void setValue(V value){
+			this.value = value;
+		}
+		
+		private K getKey(){
+			return this.key;
+		}
+		
+		private V getValue(){
+			return this.value;
+		}
+	}
+	
+	/** Instance Variables */
+	private final int INIT_SIZE = 101;
+	private final double LOAD_LIMIT = 0.75;
+	private final Entry<K,V> DELETED = new Entry<K,V>(null, null);
+	
+	private Entry<K,V>[] table;
+	private int numKeys;
+	private int numDeletes;
+	
+	/** Constructor */
+	public HashTable(){
+		init(INIT_SIZE);
+	}
+	
+	public HashTable(int size){
+		init(size);
+	}
 	
 	/**
-	* Returns the value associated with the key
-	* If the key is not present, return null
-	*
-	* @param	key		the key look up a value
-	* @return	the value associated with the key or null
+	* Returns the value of a given key
+	* 
+	* @return	the value of a key
 	*/
-	public V get(K key);
+	public V get(K key){
+		int index = find(key);
+		if(table[index] == null || table[index] == DELETED){
+			return null;
+		}
+		return table[index].getValue();
+	}
 	
 	/**
-	* See if the hash table is empty or not
+	* See if no (key, value) pair is in the map or not
 	*
-	* @return	true if the table is empty; otherwise, false
+	* @return	true if empty; otherwise, false
 	*/
-	public boolean isEmpty();
+	public boolean isEmpty(){
+		return (numKeys == 0);
+	}
 	
 	/**
-	* Puts a value associated with a key into the table
-	* and returns the old value if it is replaced
-	*
-	* @param	key		the key for a value
-	* @param	value	the value associated with the key
-	* @return	value if it is replaced; otherwise, null
+	* Print the table
 	*/
-	public V put(K key, V value);
+	public void print(){
+		int i;
+		for(i = 0; i < table.length; i++){
+			if(table[i] == null){
+				System.out.print("null ");
+			}else if(table[i] == DELETED){
+				System.out.print("[DELETED] ");
+			}else{
+				System.out.print(table[i].getValue() + " ");
+			}
+		}
+		System.out.println();
+	}
 	
 	/**
-	* Removes the entry associated with a key
+	* Add (key, value) pair to the map
 	*
-	* @param	key		the key to search for a value to delete
-	* @return	the value deleted
+	* @param	key		key to add
+	* @param	value	value to add
+	* @return	old value if replaced; otherwise, null
 	*/
-	public V remove(K key);
+	public V put(K key, V value){
+		int index = find(key);
+		
+		/** the index is empty */
+		if(table[index] == null){
+			table[index] = new Entry<K,V>(key, value);
+			numKeys++;
+			
+			/** key added -> check load limit */
+			double loadFactor = (double)(numKeys + numDeletes)/table.length;
+			if(loadFactor > LOAD_LIMIT){
+				rehash();
+			}
+			return null;
+		}
+		/** the index is occupied */
+		else{
+			V old = table[index].getValue();
+			table[index].setValue(value);
+			return old;
+		}
+	}
 	
 	/**
-	* Returns the size of the table
+	* Remove a pair with a given key
 	*
-	* @return	the size of the table
+	* @param	key		key of a pair to remove
+	* @return	removed value; otherwise, null
 	*/
-	public int size();
+	public V remove(K key){
+		int index = find(key);
+		if(table[index] == null || table[index] == DELETED){
+			return null;
+		}
+		V removed = table[index].getValue();
+		table[index] = DELETED;
+		numKeys--;
+		numDeletes++;
+		return removed;
+	}
+	
+	/**
+	* The number of pairs in the map
+	*
+	* @return	the size of the map
+	*/
+	public int size(){
+		return numKeys;
+	}
+	
+	
+	/**
+	* Initialize instance variables
+	*
+	* @param	size	the initial size of the table
+	*/
+	private void init(int size){
+		numKeys = 0;
+		numDeletes = 0;
+		table = new Entry[size];
+	}
+	
+	/**
+	* Finds the index of a given key in the hash table
+	*
+	* @param	key		key to convert
+	* @return	the index of the key
+	*/
+	private int find(K key){
+		int index = hashCode(key) % table.length;
+		if(index < 0){
+			index += table.length;
+		}
+		
+		/** resolve collision */
+		int quadratic = 1;
+		while(table[index] != null && !key.equals(table[index])){
+			index = (index + quadratic * quadratic) % table.length;
+			if(index < 0){
+				index += table.length;
+			}
+			quadratic++;
+		}
+		return index;
+	}
+	
+	/**
+	* Converts a key to a hash code using the following hash function
+	* hash code = 31^(n-1)*c1 + 31^(n-2)*c2 + ... where key = c1c2c3...
+	*
+	* @param	key		key to convert
+	* @return	hash code
+	*/
+	private int hashCode(K key){
+		String keyStr = String.valueOf(key);
+		char[] charArr = keyStr.toCharArray();
+		int code = 0;
+		for(int i = 0; i < charArr.length; i++){
+			code += Math.pow(31, i) * (int)charArr[i];
+		}
+		return code;
+	}
+
+	/**
+	* Double the size and move items over to the new table
+	*/
+	private void rehash(){
+		Entry<K,V>[] old = table;
+		table = new Entry[table.length * 2 + 1];
+		
+		for(int i = 0; i < old.length; i++){
+			if(old[i] != null && old[i] != DELETED){
+				put(old[i].getKey(), old[i].getValue());
+			}
+		}
+	}
+	
+	
+	/** Test code */
+	public static void main(String[] args){
+		HashTable<Integer, Integer> table = new HashTable<Integer, Integer>();
+		Random rand = new Random();
+		int randSize = rand.nextInt(10000) + 1;
+		
+		int[] randomKeys = new int[randSize];
+		int[] randomValues = new int[randSize];
+		
+		for(int i = 0; i < randomKeys.length; i++){
+			randomKeys[i] = rand.nextInt(100000000);
+		}
+		
+		for(int i = 0; i < randomValues.length; i++){
+			randomValues[i] = rand.nextInt(10000);
+		}
+		
+		for(int i = 0; i < randomKeys.length; i++){
+			table.put(randomKeys[i], randomValues[i]);
+		}
+		
+		table.print();
+		System.out.println("Size: " + table.size());
+		System.out.println("Is empty? " + table.isEmpty());
+	}
 }
