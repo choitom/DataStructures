@@ -1,4 +1,4 @@
-public interface SetInterface<K>{
+public interface HashSetInterface<K>{
 	/**
 	* Add an item to the set
 	*

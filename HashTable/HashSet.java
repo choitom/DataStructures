@@ -10,10 +10,10 @@
 		  it is possible to store/access items not based on their orders
 */
 
-public class Set<K> implements SetInterface<K>{
+public class HashSet<K> implements HashSetInterface<K>{
 	private HashTable<K,K> map;
 	
-	public Set(){
+	public HashSet(){
 		map = new HashTable<K,K>();
 	}
 	
@@ -64,7 +64,7 @@ public class Set<K> implements SetInterface<K>{
 	}
 	
 	public static void main(String[] args){
-		Set<Integer> set = new Set<Integer>();
+		HashSet<Integer> set = new HashSet<Integer>();
 		
 		// add 0 ~ 9
 		for(int i = 0; i < 10; i++){

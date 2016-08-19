@@ -8,7 +8,7 @@
 
 import java.util.*;
 
-public class HashTable<K,V> implements HashMap<K,V>{
+public class HashTable<K,V> implements HashTableInterface<K,V>{
 	/** A pair of key and value */
 	protected static class Entry<K,V>{
 		protected K key;

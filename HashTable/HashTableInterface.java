@@ -1,4 +1,4 @@
-public interface HashMap<K,V>{
+public interface HashTableInterface<K,V>{
 	
 	/**
 	* Returns the value of a given key

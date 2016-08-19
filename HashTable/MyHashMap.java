@@ -16,8 +16,8 @@ public class MyHashMap<K,V> extends HashTable<K,V> implements HashMapInterface<K
 	/**
 	* Returns a Set view of the keys contained in this map
 	*/
-	public Set<K> keySet(){
-		Set<K> set = new Set<K>();
+	public HashSet<K> keySet(){
+		HashSet<K> set = new HashSet<K>();
 		int i;
 		for(i = 0; i < table.length; i++){
 			if(table[i] != null && table[i] != DELETED){
@@ -38,7 +38,7 @@ public class MyHashMap<K,V> extends HashTable<K,V> implements HashMapInterface<K
 	* Returns true if this map contains a mapping for the specified key
 	*/
 	public boolean containsKey(K key){
-		Set<K> set = keySet();
+		HashSet<K> set = keySet();
 		return set.contains(key);
 	}
 	
@@ -57,7 +57,6 @@ public class MyHashMap<K,V> extends HashTable<K,V> implements HashMapInterface<K
 		return false;
 	}
 	
-	
 	/** Test code */
 	public static void main(String[] args){
 		MyHashMap<String, Integer> map = new MyHashMap<String, Integer>();
@@ -69,7 +68,7 @@ public class MyHashMap<K,V> extends HashTable<K,V> implements HashMapInterface<K
 			map.put(str[i], value[i]);		// add pairs to a map
 		}
 		
-		Set<String> keys = map.keySet();	// get a key set
+		HashSet<String> keys = map.keySet();	// get a key set
 		
 		for(int i = 0; i < str.length; i++){
 			System.out.print(keys.contains(str[i]) + " ");
