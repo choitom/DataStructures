@@ -18,18 +18,6 @@ public class HashTable<K,V> implements HashMap<K,V>{
 			this.key = key;
 			this.value = value;
 		}
-		
-		private void setValue(V value){
-			this.value = value;
-		}
-		
-		private K getKey(){
-			return this.key;
-		}
-		
-		private V getValue(){
-			return this.value;
-		}
 	}
 	
 	/** Instance Variables */
@@ -60,7 +48,7 @@ public class HashTable<K,V> implements HashMap<K,V>{
 		if(table[index] == null || table[index] == DELETED){
 			return null;
 		}
-		return table[index].getValue();
+		return table[index].value;
 	}
 	
 	/**
@@ -83,7 +71,7 @@ public class HashTable<K,V> implements HashMap<K,V>{
 			}else if(table[i] == DELETED){
 				System.out.print("[DELETED] ");
 			}else{
-				System.out.print(table[i].getValue() + " ");
+				System.out.print(table[i].value + " ");
 			}
 		}
 		System.out.println();
@@ -98,7 +86,6 @@ public class HashTable<K,V> implements HashMap<K,V>{
 	*/
 	public V put(K key, V value){
 		int index = find(key);
-		
 		/** the index is empty */
 		if(table[index] == null){
 			table[index] = new Entry<K,V>(key, value);
@@ -112,11 +99,9 @@ public class HashTable<K,V> implements HashMap<K,V>{
 			return null;
 		}
 		/** the index is occupied */
-		else{
-			V old = table[index].getValue();
-			table[index].setValue(value);
-			return old;
-		}
+		V old = table[index].value;
+		table[index].value = value;
+		return old;
 	}
 	
 	/**
@@ -130,7 +115,7 @@ public class HashTable<K,V> implements HashMap<K,V>{
 		if(table[index] == null || table[index] == DELETED){
 			return null;
 		}
-		V removed = table[index].getValue();
+		V removed = table[index].value;
 		table[index] = DELETED;
 		numKeys--;
 		numDeletes++;
@@ -171,8 +156,11 @@ public class HashTable<K,V> implements HashMap<K,V>{
 		}
 		
 		/** resolve collision */
+		
 		int quadratic = 1;
-		while(table[index] != null && !key.equals(table[index])){
+		while((table[index] != null) &&
+			 (!key.equals(table[index].key))){
+			//System.out.println("while" + index);
 			index = (index + quadratic * quadratic) % table.length;
 			if(index < 0){
 				index += table.length;
@@ -203,12 +191,14 @@ public class HashTable<K,V> implements HashMap<K,V>{
 	* Double the size and move items over to the new table
 	*/
 	private void rehash(){
+		numKeys = 0;
+		numDeletes = 0;
 		Entry<K,V>[] old = table;
 		table = new Entry[table.length * 2 + 1];
 		
 		for(int i = 0; i < old.length; i++){
 			if(old[i] != null && old[i] != DELETED){
-				put(old[i].getKey(), old[i].getValue());
+				put(old[i].key, old[i].value);
 			}
 		}
 	}
@@ -218,17 +208,17 @@ public class HashTable<K,V> implements HashMap<K,V>{
 	public static void main(String[] args){
 		HashTable<Integer, Integer> table = new HashTable<Integer, Integer>();
 		Random rand = new Random();
-		int randSize = rand.nextInt(10000) + 1;
+		int randSize = rand.nextInt(20) + 1;
 		
 		int[] randomKeys = new int[randSize];
 		int[] randomValues = new int[randSize];
 		
 		for(int i = 0; i < randomKeys.length; i++){
-			randomKeys[i] = rand.nextInt(100000000);
+			randomKeys[i] = rand.nextInt(1000);
 		}
 		
 		for(int i = 0; i < randomValues.length; i++){
-			randomValues[i] = rand.nextInt(10000);
+			randomValues[i] = rand.nextInt(100);
 		}
 		
 		for(int i = 0; i < randomKeys.length; i++){
@@ -238,5 +228,10 @@ public class HashTable<K,V> implements HashMap<K,V>{
 		table.print();
 		System.out.println("Size: " + table.size());
 		System.out.println("Is empty? " + table.isEmpty());
+		
+		for(int i = 0; i < randomKeys.length; i++){
+			table.remove(randomKeys[i]);
+		}
+		table.print();
 	}
 }
