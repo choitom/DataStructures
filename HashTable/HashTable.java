@@ -10,22 +10,21 @@ import java.util.*;
 
 public class HashTable<K,V> implements HashMap<K,V>{
 	/** A pair of key and value */
-	private static class Entry<K,V>{
-		private K key;
-		private V value;
+	protected static class Entry<K,V>{
+		protected K key;
+		protected V value;
 		
-		private Entry(K key, V value){
+		public Entry(K key, V value){
 			this.key = key;
 			this.value = value;
 		}
 	}
 	
 	/** Instance Variables */
-	private final int INIT_SIZE = 101;
+	protected Entry<K,V>[] table;
+	protected final Entry<K,V> DELETED = new Entry<K,V>(null, null);
 	private final double LOAD_LIMIT = 0.75;
-	private final Entry<K,V> DELETED = new Entry<K,V>(null, null);
-	
-	private Entry<K,V>[] table;
+	private final int INIT_SIZE = 101;
 	private int numKeys;
 	private int numDeletes;
 	
