@@ -15,3 +15,4 @@ So far implemented:
   - Priority Queue
   - Binary Search Tree
   - Hash Table (Open Addressing)
+  - Hash Set & Map using a Hash Table
