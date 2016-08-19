@@ -16,5 +16,4 @@ So far implemented:
   - Binary Search Tree
   - Hash Table (Open Addressing)
   - Hash Set & Map using a Hash Table
-  - Sort
-    -> Selection Sort
+  - Sort -> Bubble, Selection, Insertion, Merge
