@@ -7,16 +7,16 @@
 	   from the heap and add them to an array
 */
 
-public class Heap<E extends Comparable<E>>{
+public class HeapSort1<E extends Comparable<E>>{
 	private E[] heap;
 	private int size;
 	private final int INIT_SIZE = 10;
 	
-	public Heap(){
+	public HeapSort1(){
 		init(INIT_SIZE);
 	}
 	
-	public Heap(int size){
+	public HeapSort1(int size){
 		init(size);
 	}
 	
@@ -146,7 +146,7 @@ public class Heap<E extends Comparable<E>>{
 	/** Test code */
 	public static void main(String[] args){
 		String[] arr = {"Tom", "Choi", "Is", "An", "Awesome", "Googler", "Believe", "Yourself", "That", "You", "Can", "Do", "It"};
-		Heap<String> h = new Heap<String>();
+		HeapSort1<String> h = new HeapSort1<String>();
 		
 		for(int i = 0; i < arr.length; i++){
 			h.add(arr[i]);
