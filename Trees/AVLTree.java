@@ -78,13 +78,61 @@ public class AVLTree<E extends Comparable<E>> implements AVLInterface<E>{
 		return balanceHeight(node);
 	}
 	
+	
+	/**
+	* Remove a data from the tree while balancing the tree height
+	*
+	* @param	data	an item to remove
+	*/
+	public void remove(E data){
+		root = remove(root, data);
+	}
+	
+	private AVLNode<E> remove(AVLNode<E> node, E data){
+		if(node == null){
+			return null;
+		}
+		int comparison = data.compareTo(node.data);
+		
+		/** the node to delete found */
+		if(comparison == 0){
+			
+			/** two children */
+			if(node.left != null && node.right != null){
+				node.data = rightMost(node.left);
+				node.left = remove(node.left, node.data);
+			}else{
+				return (node.left != null) ? node.left : node.right;
+			}
+		}
+		/** search left */
+		else if(comparison < 1){
+			node.left = remove(node.left, data);
+		}
+		/** search right */
+		else{
+			node.right = remove(node.right, data);
+		}
+		return balanceHeight(node);
+	}
+	
+	/**
+	* Finds the right most node and returns its data
+	*/
+	private E rightMost(AVLNode<E> node){
+		while(node.right != null){
+			node = node.right;
+		}
+		return node.data;
+	}
+	
 	private AVLNode<E> balanceHeight(AVLNode<E> node){
 		
 		/** left imbalance */
 		if(height(node.left) - height(node.right) == 2){
 			
 			/** right-right rotation */
-			if(height(node.left.left) > height(node.left.right)){
+			if(height(node.left.left) >= height(node.left.right)){
 				node = rightRightRotation(node);
 			}
 			/** left-right rotation */
@@ -96,7 +144,7 @@ public class AVLTree<E extends Comparable<E>> implements AVLInterface<E>{
 		else if(height(node.right) - height(node.left) == 2){
 			
 			/** left-left rotation */
-			if(height(node.right.right) > height(node.right.left)){
+			if(height(node.right.right) >= height(node.right.left)){
 				node = leftLeftRotation(node);
 			}
 			/** right-left rotation */
@@ -221,9 +269,11 @@ public class AVLTree<E extends Comparable<E>> implements AVLInterface<E>{
 	/** Test Code */
 	public static void main(String[] args){
 		AVLTree<Integer> tree = new AVLTree<Integer>();
-		tree.insert(3);
-		tree.insert(1);
-		tree.insert(2);
+		int[] arr = {90, 80, 100, 85, 70};
+		for(int i = 0; i < arr.length; i++){
+			tree.insert(arr[i]);
+		}
+		tree.remove(100);
 		tree.preorderTraversal();
 	}
 }
