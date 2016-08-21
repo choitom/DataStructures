@@ -78,15 +78,13 @@ public class AVLTree<E extends Comparable<E>> implements AVLInterface<E>{
 		return balanceHeight(node, data);
 	}
 	
-	private AVLNode<E> balanceHeight(AVLNode<E> node, E data){
-		int comparison;
-	
+	private AVLNode<E> balanceHeight(AVLNode<E> node){
+		
 		/** left imbalance */
 		if(height(node.left) - height(node.right) == 2){
-			comparison = data.compareTo(node.left.data);
 			
 			/** right-right rotation */
-			if(comparison < 0){
+			if(height(node.left.left) > height(node.left.right)){
 				node = rightRightRotation(node);
 			}
 			/** left-right rotation */
@@ -96,10 +94,9 @@ public class AVLTree<E extends Comparable<E>> implements AVLInterface<E>{
 		}
 		/** right imbalance */
 		else if(height(node.right) - height(node.left) == 2){
-			comparison = data.compareTo(node.right.data);
 			
 			/** left-left rotation */
-			if(comparison > 0){
+			if(height(node.right.right) > height(node.right.left)){
 				node = leftLeftRotation(node);
 			}
 			/** right-left rotation */
