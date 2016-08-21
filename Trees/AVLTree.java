@@ -1,3 +1,14 @@
+/**
+	Author	: Tom Choi
+	Date	: 08/21/2016
+	
+	Implementation AVL Tree (self-balancing tree)
+		- The advantage of having a self-balancing function is
+		  that the tree ensures that search, insertion, deletion
+		  operations run in O(logn) time.
+		- The height of the tree is always logn.
+*/
+
 public class AVLTree<E extends Comparable<E>> implements AVLInterface<E>{
 	
 	/** Node class with data, height, left and right child */
