@@ -75,7 +75,7 @@ public class AVLTree<E extends Comparable<E>> implements AVLInterface<E>{
 				node.right = insert(node.right, data);
 			}
 		}
-		return balanceHeight(node, data);
+		return balanceHeight(node);
 	}
 	
 	private AVLNode<E> balanceHeight(AVLNode<E> node){
@@ -221,9 +221,9 @@ public class AVLTree<E extends Comparable<E>> implements AVLInterface<E>{
 	/** Test Code */
 	public static void main(String[] args){
 		AVLTree<Integer> tree = new AVLTree<Integer>();
-		tree.insert(2);
 		tree.insert(3);
 		tree.insert(1);
+		tree.insert(2);
 		tree.preorderTraversal();
 	}
 }
