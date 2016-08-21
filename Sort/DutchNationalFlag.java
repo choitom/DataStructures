@@ -23,6 +23,9 @@ public class DutchNationalFlag{
 		arr[j] = temp;
 	}
 	
+	/**
+	* Sort the array using national ducth flag algorithm
+	*/
 	public static void sort(){
 		int i = 0;
 		int j = 0;
@@ -39,11 +42,11 @@ public class DutchNationalFlag{
 				swap(j,k);
 				k--;
 			}
-			print();
-		}
+		}  
+		print();
 	}
 	
-	public static void print(){
+	private static void print(){
 		for(int i = 0; i < arr.length; i++){
 			System.out.print(arr[i] + " ");
 		}System.out.println();
@@ -51,7 +54,7 @@ public class DutchNationalFlag{
 	
 	public static void main(String[] args){
 		Random rand = new Random();
-		arr = new char[10];
+		arr = new char[100];
 		for(int i = 0; i < arr.length; i++){
 			char randChar = (char)(rand.nextInt(3) + 65);
 			arr[i] = randChar;
