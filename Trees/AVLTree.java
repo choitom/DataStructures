@@ -69,42 +69,45 @@ public class AVLTree<E extends Comparable<E>> implements AVLInterface<E>{
 			/** insert into left subtree */
 			else if(comparison < 0){
 				node.left = insert(node.left, data);
-				
-				/** the height is unbalanced after left insertion */
-				if(height(node.left) - height(node.right) == 2){
-					
-					comparison = data.compareTo(node.left.data);
-					
-					/** right-right rotation */
-					if(comparison < 0){
-						node = rightRightRotation(node);
-					}
-					/** left-right rotation */
-					else{
-						node = leftRightRotation(node);
-					}
-				}
 			}
 			/** insert into right subtree */
 			else{
 				node.right = insert(node.right, data);
-				
-				/** the height is unbalanced after right insertion */
-				if(height(node.right) - height(node.left) == 2){
-					
-					comparison = data.compareTo(node.right.data);
-					
-					/** left-left rotation */
-					if(comparison > 0){
-						node = leftLeftRotation(node);
-					}
-					/** right-left rotation */
-					else{
-						node = rightLeftRotation(node);
-					}
-				}
 			}
 		}
+		return balanceHeight(node, data);
+	}
+	
+	private AVLNode<E> balanceHeight(AVLNode<E> node, E data){
+		int comparison;
+	
+		/** left imbalance */
+		if(height(node.left) - height(node.right) == 2){
+			comparison = data.compareTo(node.left.data);
+			
+			/** right-right rotation */
+			if(comparison < 0){
+				node = rightRightRotation(node);
+			}
+			/** left-right rotation */
+			else{
+				node = leftRightRotation(node);
+			}
+		}
+		/** right imbalance */
+		else if(height(node.right) - height(node.left) == 2){
+			comparison = data.compareTo(node.right.data);
+			
+			/** left-left rotation */
+			if(comparison > 0){
+				node = leftLeftRotation(node);
+			}
+			/** right-left rotation */
+			else{
+				node = rightLeftRotation(node);
+			}
+		}
+		/** set the height of the node */
 		node.height = max(height(node.left), height(node.right)) + 1;
 		return node;
 	}
@@ -221,9 +224,9 @@ public class AVLTree<E extends Comparable<E>> implements AVLInterface<E>{
 	/** Test Code */
 	public static void main(String[] args){
 		AVLTree<Integer> tree = new AVLTree<Integer>();
-		tree.insert(5);
-		tree.insert(7);
-		tree.insert(6);
+		tree.insert(2);
+		tree.insert(3);
+		tree.insert(1);
 		tree.preorderTraversal();
 	}
 }
