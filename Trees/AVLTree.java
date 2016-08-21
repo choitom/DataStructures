@@ -1,17 +1,6 @@
-/**
-	Author	: Tom Choi
-	Date	: 08/21/2016
+public class AVLTree <E extends Comparable<E>> implements AVLInterface<E>{
 	
-	Implementation AVL Tree (self-balancing tree)
-		- The advantage of having a self-balancing function is
-		  that the tree ensures that search, insertion, deletion
-		  operations run in O(logn) time.
-		- The height of the tree is always logn.
-*/
-
-public class AVLTree<E extends Comparable<E>> implements AVLInterface<E>{
-	
-	/** Node class with data, height, left and right child */
+	/** Node class */
 	private static class AVLNode<E>{
 		private E data;
 		private int height;
@@ -19,13 +8,14 @@ public class AVLTree<E extends Comparable<E>> implements AVLInterface<E>{
 		private AVLNode<E> right;
 		
 		private AVLNode(){
-			this.data = null;
-			this.height = 0;
-			this.left = null;
-			this.right = null;
+			init(null);
 		}
 		
 		private AVLNode(E data){
+			init(data);
+		}
+		
+		private void init(E data){
 			this.data = data;
 			this.height = 0;
 			this.left = null;
@@ -33,19 +23,22 @@ public class AVLTree<E extends Comparable<E>> implements AVLInterface<E>{
 		}
 	}
 	
-	/** root of the tree */
+	/** The root of the tree */
 	private AVLNode<E> root;
+	private E removed;
 	private int size;
 	
+	/** Constructor*/
 	public AVLTree(){
-		root = null;
+		init();
 	}
+	
 	
 	/**
 	* Clear everything in the tree
 	*/
 	public void clear(){
-		root = null;
+		init();
 	}
 	
 	/**
@@ -54,83 +47,127 @@ public class AVLTree<E extends Comparable<E>> implements AVLInterface<E>{
 	* @return	true if empty; otherwise, false
 	*/
 	public boolean isEmpty(){
-		return root == null;
+		return (root == null);
 	}
 	
 	/**
-	* Inserts an data to the tree while balancing the tree height
+	* Inserts an item to the tree while balancing the tree height
 	*
-	* @param	data	an item to insert
+	* @param	item	an item to insert
 	*/
 	public void insert(E data){
 		root = insert(root, data);
 	}
 	
+	/**
+	* Removes an item from the tree while balancing the tree height
+	*
+	* @ param	item	an item to remove
+	*/
+	public E remove(E data){
+		root = remove(root, data);
+		return removed;
+	}
+	
+	/**
+	* Returns the size of the tree
+	*
+	* @return	number of nodes in the tree
+	*/
+	public int size(){
+		return size;
+	}
+	
+	/**
+	* Traverse in left -> node -> right order
+	*/
+	public void inorderTraversal(){
+		inorderHelper(root);
+	}
+	
+	/**
+	* Traverse in node -> left -> right order
+	*/
+	public void preorderTraversal(){
+		preorderHelper(root);
+	}
+	
+	/**
+	* Traverse in left -> right -> node order
+	*/
+	public void postorderTraversal(){
+		postorderHelper(root);
+	}
+	
+	
+	/**
+	* PRIVATE METHODS
+	*/
+	private void init(){
+		this.root = null;
+		this.removed = null;
+		this.size = 0;
+	}
+	
 	private AVLNode<E> insert(AVLNode<E> node, E data){
-		/** the node to store data is empty */
+		/** create a new node */
 		if(node == null){
 			node = new AVLNode<E>(data);
 		}else{
 			int comparison = data.compareTo(node.data);
 			
-			/** duplicates */
+			/** duplicate */
 			if(comparison == 0){
 				return node;
 			}
-			/** insert into left subtree */
+			/** insert into the left subtree */
 			else if(comparison < 0){
 				node.left = insert(node.left, data);
 			}
-			/** insert into right subtree */
+			/** insert into the right subtree*/
 			else{
 				node.right = insert(node.right, data);
 			}
 		}
+		/** balance the height of the tree */
+		size++;
 		return balanceHeight(node);
 	}
 	
-	
-	/**
-	* Remove a data from the tree while balancing the tree height
-	*
-	* @param	data	an item to remove
-	*/
-	public void remove(E data){
-		root = remove(root, data);
-	}
-	
 	private AVLNode<E> remove(AVLNode<E> node, E data){
+		/** item to delete not found */
 		if(node == null){
+			removed = null;
 			return null;
 		}
+		
 		int comparison = data.compareTo(node.data);
 		
-		/** the node to delete found */
-		if(comparison == 0){
+		/** remove from the left subtree */
+		if(comparison < 0){
+			node.left = remove(node.left, data);
+		}
+		/** remove from the right subtree */
+		else if(comparison > 0){
+			node.right = remove(node.right, data);
+		}
+		/** remove the node */
+		else{
+			removed = node.data;
 			
 			/** two children */
 			if(node.left != null && node.right != null){
-				node.data = rightMost(node.left);
+				node.data = findRightMost(node.left);
 				node.left = remove(node.left, node.data);
 			}else{
 				return (node.left != null) ? node.left : node.right;
 			}
 		}
-		/** search left */
-		else if(comparison < 1){
-			node.left = remove(node.left, data);
-		}
-		/** search right */
-		else{
-			node.right = remove(node.right, data);
-		}
+		size--;
 		return balanceHeight(node);
 	}
 	
-	/**
-	* Finds the right most node and returns its data
-	*/
-	private E rightMost(AVLNode<E> node){
+	private E findRightMost(AVLNode<E> node){
 		while(node.right != null){
 			node = node.right;
 		}
@@ -138,7 +175,6 @@ public class AVLTree<E extends Comparable<E>> implements AVLInterface<E>{
 	}
 	
 	private AVLNode<E> balanceHeight(AVLNode<E> node){
-		
 		/** left imbalance */
 		if(height(node.left) - height(node.right) == 2){
 			
@@ -163,79 +199,50 @@ public class AVLTree<E extends Comparable<E>> implements AVLInterface<E>{
 				node = rightLeftRotation(node);
 			}
 		}
-		/** set the height of the node */
 		node.height = max(height(node.left), height(node.right)) + 1;
 		return node;
 	}
 	
-	/**
-	* Rotates a child to right
-	*/
 	private AVLNode<E> rightRightRotation(AVLNode<E> node){
-		AVLNode<E> rotated = node.left;
-		node.left = rotated.right;
-		rotated.right = node;
+		AVLNode<E> newNode = node.left;
+		node.left = newNode.right;
+		newNode.right = node;
 		node.height = max(height(node.left), height(node.right)) + 1;
-		rotated.height = max(height(rotated.left), height(rotated.right)) + 1;
-		return rotated;
+		newNode.height = max(height(newNode.left), height(newNode.right)) + 1;
+		return newNode;
 	}
 	
-	/**
-	* Rotates a child to left
-	*/
 	private AVLNode<E> leftLeftRotation(AVLNode<E> node){
-		AVLNode<E> rotated = node.right;
-		node.right = rotated.left;
-		rotated.left = node;
+		AVLNode<E> newNode = node.right;
+		node.right = newNode.left;
+		newNode.left = node;
 		node.height = max(height(node.left), height(node.right)) + 1;
-		rotated.height = max(height(rotated.left), height(rotated.right)) + 1;
-		return rotated;
+		newNode.height = max(height(newNode.left), height(newNode.right)) + 1;
+		return newNode;
 	}
 	
-	/**
-	* Double rotates left first and then right
-	*/
+	private AVLNode<E> rightLeftRotation(AVLNode<E> node){
+		node.right = rightRightRotation(node.right);
+		return leftLeftRotation(node);
+	}
+	
 	private AVLNode<E> leftRightRotation(AVLNode<E> node){
 		node.left = leftLeftRotation(node.left);
 		return rightRightRotation(node);
 	}
 	
 	/**
-	* Double rotates right first and then left
-	*/
-	private AVLNode<E> rightLeftRotation(AVLNode<E> node){
-		node.right = rightRightRotation(node.right);
-		return leftLeftRotation(node);
-	}
-	
-	/**
-	* Returns the height of a node
+	* Returns the height of a node in the tree
 	*/
 	private int height(AVLNode<E> node){
-		return (node != null) ? node.height : 0;
+		return (node == null) ? 0 : node.height;
 	}
 	
 	/**
-	* Compares two numbers and return the greater one
+	* Compare two integers and return the greater one
 	*/
 	private int max(int i, int j){
 		return (i > j) ? i : j;
-	}
-	
-	/**
-	* Returns the size of the tree
-	*
-	* @return	number of nodes in the tree
-	*/
-	public int size(){
-		return size;
-	}
-	
-	/**
-	* Traverse in left -> node -> right order
-	*/
-	public void inorderTraversal(){
-		inorderHelper(root);
 	}
 	
 	private void inorderHelper(AVLNode<E> node){
@@ -245,27 +252,13 @@ public class AVLTree<E extends Comparable<E>> implements AVLInterface<E>{
 			inorderHelper(node.right);
 		}
 	}
-	
-	/**
-	* Traverse in node -> left -> right order
-	*/
-	public void preorderTraversal(){
-		preorderHelper(root);
-	}
-	
+		
 	private void preorderHelper(AVLNode<E> node){
 		if(node != null){
 			System.out.print(node.data + " ");
 			preorderHelper(node.left);
 			preorderHelper(node.right);
 		}
-	}
-	
-	/**
-	* Traverse in left -> right -> node order
-	*/
-	public void postorderTraversal(){
-		postorderHelper(root);
 	}
 	
 	private void postorderHelper(AVLNode<E> node){
@@ -277,14 +270,18 @@ public class AVLTree<E extends Comparable<E>> implements AVLInterface<E>{
 	}
 	
 	
-	/** Test Code */
+	/** TEST CODES */
 	public static void main(String[] args){
 		AVLTree<Integer> tree = new AVLTree<Integer>();
-		int[] arr = {90, 80, 100, 85, 70};
+		int[] arr = {90, 80, 100, 70, 85};
 		for(int i = 0; i < arr.length; i++){
 			tree.insert(arr[i]);
 		}
-		tree.remove(100);
+		System.out.println(tree.remove(100));
 		tree.preorderTraversal();
+		System.out.println(tree.size());
+		System.out.println(tree.isEmpty());
+		tree.clear();
+		System.out.println(tree.isEmpty());
 	}
 }

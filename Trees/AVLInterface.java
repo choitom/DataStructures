@@ -20,6 +20,13 @@ public interface AVLInterface<E>{
 	public void insert(E item);
 	
 	/**
+	* Removes an item from the tree while balancing the tree height
+	*
+	* @ param	item	an item to remove
+	*/
+	public E remove(E item);
+	
+	/**
 	* Returns the size of the tree
 	*
 	* @return	number of nodes in the tree
