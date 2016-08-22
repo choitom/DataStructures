@@ -1,123 +1,198 @@
-/**
-	Author	: Tom Choi
-	Date	: 08/21/2016
-	
-	Abstract base class for Graph. A graph is a set of
-	nodes and a set of edges. Nodes are represented by
-	integers. Edges are ordered pairs of nodes with weight.
-	
-	It reads a graph text file and generate edge objects.
-	Then, map each node and its adjacent edges to the map,
-	thereby generating an adjacency matrix.
-*/
-
 import java.util.*;
 import java.io.*;
 
 public abstract class AbstractGraph{
-	private Edge[] edges;
 	
-	/** The number of nodes and edges in the graph */
-	protected int numEdges;
-	protected int numNodes;
-	
-	/** Keeps track of each node visited or not */
-	protected int[] visited;
-	
-	/** Hash map for storing node and its adjacent edges */
 	protected HashMap<Integer, LinkedList<Edge>> map;
+	protected int numNodes;
+	protected int[] incomingEdges;
+	protected boolean[] visited;
 	
 	public AbstractGraph(Scanner scan){
 		readGraphFile(scan);
-		generateGraph();
+		initIncomingEdges();
+		visited = new boolean[numNodes];
 	}
 	
 	/**
-	* Read a graph text file and create edge objects
-	* The first line has the number of edges
-	* The following lines have src, dest, and weight
+	* Print out the mapped graph
 	*/
-	protected void readGraphFile(Scanner s){
-		numEdges = s.nextInt();
-		edges = new Edge[numEdges];
-		
-		int i = 0;
-		int src;
-		int dest;
-		double weight;
-		
-		do{
-			src = s.nextInt();
-			dest = s.nextInt();
-			weight = s.nextDouble();
-			edges[i++] = new Edge(src, dest, weight);
-		}while(s.hasNext());
-	}
-	
-	/**
-	* Generate a graph in accordance with the format of a graph
-	* i.e. adjacency list or adjacency matrix
-	*/
-	protected void generateGraph(){
-		map = new HashMap<Integer, LinkedList<Edge>>();
-		for(int i = 0; i < edges.length; i++){
-			Edge e = edges[i];
-			LinkedList<Edge> lst;
-			int key = e.getSrc();
-			
-			if(!map.containsKey(key)){
-				lst = new LinkedList<Edge>();
-				lst.add(e);
-				map.put(key, lst);
+	protected void printMap(){
+		for(int i = 0; i < numNodes; i++){
+			LinkedList<Edge> edges = map.get(i);
+			if(edges == null){
+				System.out.println(i + ": null");
 			}else{
-				lst = map.get(key);
-				lst.add(e);
-				map.put(key, lst);
+				System.out.print(i + ": ");
+				for(Edge e : edges){
+					System.out.print(e.getDest() + " ");
+				}System.out.println();
 			}
 		}
-		visited = new int[size()];
-		numNodes = size();
 	}
 	
 	/**
-	* Returns the number of nodes
+	* Finds if there exists a cycle in the graph using the following method
 	*
-	* @return	the number of nodes in the graph
+	* The graph has nC2 = n*(n-1)/2 number of edges at most.
+	* So, if it iterates more than nC2 times while running DFS
+	* then, there must an edge that is revisited
 	*/
-	protected int size(){
-		return map.keySet().size();
-	}
-	
-	/**
-	* Check if the start node is valid or not
-	*/
-	protected void checkStartNode(int start){
-		if(!(start <= numNodes && start >= 0)){
-			System.err.println("Check for valid start node!!!");
-			return;
+	protected boolean isAcyclic(){
+		boolean acyclic = true;
+		boolean checkIncomingEdges = false;
+		ArrayList<Integer> noIncoming = new ArrayList<Integer>();
+		
+		for(int i = 0; i < incomingEdges.length; i++){
+			if(incomingEdges[i] == 0){
+				noIncoming.add(i);
+			}
 		}
+		
+		if(noIncoming.size() == 0){
+			return false;
+		}
+		
+		for(int i = 0; i < noIncoming.size(); i++){
+			acyclic = isAcyclicHelper(noIncoming.get(i));
+		}
+		return acyclic;
 	}
 	
 	/**
-	* Set all nodes unvisited after traversal
+	* Reset all nodes unvisited
 	*/
-	protected void setUnvisited(){
+	protected void resetVisited(){
 		for(int i = 0; i < visited.length; i++){
-			visited[i] = 0;
+			visited[i] = false;
 		}
 	}
 	
 	/**
-	* Search the graph using the breath-first search algorithm
-	*
-	* @return	the order of nodes searched in the graph using BFS
+	* Retrieve nodes that has no incoming edges
 	*/
-	public abstract int[] BFS(int start);
+	protected ArrayList<Integer> noIncoming(int[] arr){
+		ArrayList<Integer> lst = new ArrayList<Integer>();
+		for(int i = 0; i < arr.length; i++){
+			if(arr[i] == 0){
+				lst.add(i);
+			}
+		}
+		return lst;
+	}
 	
 	/**
-	* Search the graph using the depth-first search algorithm
-	*
-	* @return	the order of nodes searched in the graph using DFS
+	* Run DFS on the start node
 	*/
-	public abstract int[] DFS(int start);
+	private boolean isAcyclicHelper(int start){
+		int max = numNodes*(numNodes-1)/2 + 1;
+		Deque<Integer> stack = new ArrayDeque<Integer>();
+		int counter = 0;
+		stack.push(start);
+		
+		while(!stack.isEmpty() && counter <= max){
+			int next = stack.pop();
+			LinkedList<Edge> adj = map.get(next);
+			if(adj != null){
+				for(Edge e : adj){
+					stack.push(e.getDest());
+				}
+			}		
+		}
+		if(counter > max){
+			return false;
+		}
+		return true;
+	}
+	
+	/**
+	* Read a graph text file and create a graph
+	*/
+	private void readGraphFile(Scanner scan){
+		Edge[] edges = new Edge[scan.nextInt()];
+		int index = 0;
+		
+		while(scan.hasNext()){
+			int src = scan.nextInt();
+			int dest = scan.nextInt();
+			double weight = scan.nextDouble();
+			edges[index++] = new Edge(src, dest, weight);
+		}
+		generateAdjacencyList(edges);
+	}
+	
+	/**
+	* Generate the adjacency list using hash map
+	* It maps each node and its adjacent edges
+	*/
+	private void generateAdjacencyList(Edge[] edge){
+		findNodes(edge);
+		map = new HashMap<Integer, LinkedList<Edge>>();
+		
+		for(Edge e : edge){
+			LinkedList<Edge> lst;
+			int src = e.getSrc();
+			if(!map.containsKey(src)){
+				lst = new LinkedList<Edge>();
+				lst.add(e);
+				map.put(src, lst);
+			}else{
+				map.get(src).add(e);
+			}
+		}
+		for(int i = 0; i < numNodes; i++){
+			if(!map.containsKey(i)){
+				map.put(i, null);
+			}
+		}
+	}
+	
+	/**
+	* Find the number of distinct nodes
+	*/
+	private void findNodes(Edge[] edge){
+		HashSet<Integer> set = new HashSet<Integer>();
+		for(Edge e : edge){
+			set.add(e.getSrc());
+			set.add(e.getDest());
+		}
+		numNodes = set.size();
+	}
+	
+	/**
+	* Find the number of incoming edges for each node
+	* Used for finding topological order in the graph
+	*/
+	private void initIncomingEdges(){
+		incomingEdges = new int[numNodes];
+		for(int node : map.keySet()){
+			LinkedList<Edge> edges = map.get(node);
+			if(edges != null){
+				for(Edge e : edges){
+					incomingEdges[e.getDest()]++;
+				}	
+			}	
+		}
+	}
+	
+	/**
+	* Search the graph using the BFS algorithm
+	*
+	* @return	BFS order
+	*/
+	public abstract ArrayList<Integer> BFS(int start);
+	
+	/**
+	* Search the graph using the DFS algorithm
+	*
+	* @return	DFS order
+	*/
+	public abstract ArrayList<Integer> DFS(int start);
+	
+	/**
+	* Find the topological order in the graph
+	*
+	* @return	topological order
+	*/
+	public abstract ArrayList<Integer> topologicalOrder();
 }
