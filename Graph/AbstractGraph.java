@@ -1,3 +1,15 @@
+/**
+	Author	: Tom Choi
+	Date	: 08/22/2016
+	
+	Base class for Adjacency List and Adjacency Matrix.
+	Using built-in hash map, it maps adjacent nodes for
+	each node in the graph.
+	
+	It also provides a method that determines if a given graph
+	is acyclic or not by using the DFA and Pigeon Hole principle.
+*/
+
 import java.util.*;
 import java.io.*;
 

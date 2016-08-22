@@ -1,3 +1,12 @@
+/**
+	Author	: Tom Choi
+	Date	: 08/22/2016
+	
+	Implemenetaion of BFS, DFS and Topological Sort
+	for the graph represented by the adjacency matrix
+	which uses Java built-in hash map.
+*/
+
 import java.util.*;
 import java.io.*;
 
