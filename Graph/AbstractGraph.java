@@ -95,6 +95,14 @@ public abstract class AbstractGraph{
 		return (start >= 0 && start <= numNodes) ? true : false;
 	}
 	
+	/**
+	* Set all nodes unvisited after traversal
+	*/
+	protected void setUnvisited(){
+		for(int i = 0; i < visited.length; i++){
+			visited[i] = 0;
+		}
+	}
 	
 	/**
 	* Search the graph using the breath-first search algorithm

@@ -21,6 +21,7 @@ public class AdjacencyList extends AbstractGraph{
 	* @return	the order of nodes searched in the graph using BFS
 	*/
 	public int[] BFS(int start){
+		/** check for valid input */
 		if(!checkStartNode(start)){
 			System.err.println("Check for valid start node!!!");
 			return null;
@@ -56,7 +57,7 @@ public class AdjacencyList extends AbstractGraph{
 				}
 			}
 		}
-		
+		setUnvisited();
 		return searched;
 	}
 	
@@ -66,7 +67,40 @@ public class AdjacencyList extends AbstractGraph{
 	* @return	the order of nodes searched in the graph using DFS
 	*/
 	public int[] DFS(int start){
+		/** check for valid input */
+		if(!checkStartNode(start)){
+			System.err.println("Check for valid start node!!!");
+			return null;
+		}
+		
+		/***/
+		Deque<Integer> stack = new ArrayDeque<Integer>();
+		stack.push(start);
+		
+		/** store search result */
 		int[] searched = new int[numNodes];
+		int index = 0;
+		visited[start] = 1;		// set start node visited
+		
+		int next;
+		int adjacentNode;
+		
+		while(!stack.isEmpty()){
+			next = stack.pop();
+			searched[index++] = next;
+			
+			/** Find adjacent edges */
+			LinkedList<Edge> adjacentEdges = map.get(next);
+			
+			for(int i = adjacentEdges.size() - 1; i >= 0; i--){
+				adjacentNode = adjacentEdges.get(i).getDest();
+				if(visited[adjacentNode] == 0){
+					visited[adjacentNode] = 1;
+					stack.push(adjacentNode);
+				}
+			}
+		}
+		setUnvisited();
 		return searched;
 	}
 	
@@ -74,8 +108,14 @@ public class AdjacencyList extends AbstractGraph{
 		Scanner s = new Scanner(new File("graph1.txt"));
 		AdjacencyList g = new AdjacencyList(s);
 		int[] bfs = g.BFS(0);
+		int[] dfs = g.DFS(0);
+		
 		for(int i = 0; i < bfs.length; i++){
 			System.out.print(bfs[i] + " ");
+		}System.out.println();
+		
+		for(int i = 0; i < dfs.length; i++){
+			System.out.print(dfs[i] + " ");
 		}System.out.println();
 	}
 }
