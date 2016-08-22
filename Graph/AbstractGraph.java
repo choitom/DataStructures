@@ -91,8 +91,11 @@ public abstract class AbstractGraph{
 	/**
 	* Check if the start node is valid or not
 	*/
-	protected boolean checkStartNode(int start){
-		return (start >= 0 && start <= numNodes) ? true : false;
+	protected void checkStartNode(int start){
+		if(!(start <= numNodes && start >= 0)){
+			System.err.println("Check for valid start node!!!");
+			return;
+		}
 	}
 	
 	/**

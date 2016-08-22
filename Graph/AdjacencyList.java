@@ -22,10 +22,7 @@ public class AdjacencyList extends AbstractGraph{
 	*/
 	public int[] BFS(int start){
 		/** check for valid input */
-		if(!checkStartNode(start)){
-			System.err.println("Check for valid start node!!!");
-			return null;
-		}
+		checkStartNode(start);
 		
 		/** initialize a queue and add the start item */
 		Queue<Integer> q = new LinkedList<Integer>();
@@ -68,10 +65,7 @@ public class AdjacencyList extends AbstractGraph{
 	*/
 	public int[] DFS(int start){
 		/** check for valid input */
-		if(!checkStartNode(start)){
-			System.err.println("Check for valid start node!!!");
-			return null;
-		}
+		checkStartNode(start);
 		
 		/***/
 		Deque<Integer> stack = new ArrayDeque<Integer>();
