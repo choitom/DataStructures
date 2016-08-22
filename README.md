@@ -16,6 +16,6 @@ So far implemented:
   - Binary Search Tree
   - Hash Table (Open Addressing)
   - Hash Set & Map using a Hash Table
-  - Sort -> Bubble, Selection, Insertion, Merge
+  - Sort -> Bubble, Selection, Insertion, Merge, Quick
   - AVL Tree
   - Adjacency List & Matrix and BFS & DFS
