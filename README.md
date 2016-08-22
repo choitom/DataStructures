@@ -18,3 +18,4 @@ So far implemented:
   - Hash Set & Map using a Hash Table
   - Sort -> Bubble, Selection, Insertion, Merge
   - AVL Tree
+  - Adjacency List & Matrix and BFS & DFS
