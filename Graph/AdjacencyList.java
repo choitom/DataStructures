@@ -11,6 +11,8 @@ import java.util.*;
 import java.io.*;
 
 public class AdjacencyList extends AbstractGraph{
+	
+	/** Constructor */
 	public AdjacencyList(Scanner scan){
 		super(scan);
 	}
