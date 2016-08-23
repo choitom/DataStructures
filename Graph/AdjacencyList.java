@@ -244,12 +244,15 @@ public class AdjacencyList extends AbstractGraph{
 		}return true;
 	}
 	
-	/** Test Code using Carleton College CS courses*/
+	
+	/** Test Code */
 	public static void main(String[] args) throws FileNotFoundException{
 		Scanner s = new Scanner(new File("WeightGraph.txt"));
-		AdjacencyList g = new AdjacencyList(s);
-		
-		double[] weightPath = g.dijkstra(0, 4);
+		AbstractGraph g = new AdjacencyList(s);
+	}
+	
+	public static void testGraph(AbstractGraph graph){
+		double[] weightPath = graph.dijkstra(0, 4);
 		g.printDijkstra(weightPath);
 	}
 }
