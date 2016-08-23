@@ -19,6 +19,7 @@ public abstract class AbstractGraph{
 	protected int numNodes;
 	protected int[] incomingEdges;
 	protected boolean[] visited;
+	protected final int MAX = Integer.MAX_VALUE;
 	
 	public AbstractGraph(Scanner scan){
 		readGraphFile(scan);
@@ -190,6 +191,7 @@ public abstract class AbstractGraph{
 	/**
 	* Search the graph using the BFS algorithm
 	*
+	* @param	start	the start node
 	* @return	BFS order
 	*/
 	public abstract ArrayList<Integer> BFS(int start);
@@ -197,6 +199,7 @@ public abstract class AbstractGraph{
 	/**
 	* Search the graph using the DFS algorithm
 	*
+	* @param	start	the start node
 	* @return	DFS order
 	*/
 	public abstract ArrayList<Integer> DFS(int start);
@@ -204,7 +207,17 @@ public abstract class AbstractGraph{
 	/**
 	* Find the topological order in the graph
 	*
+	* @param	start	the start node
 	* @return	topological order
 	*/
 	public abstract ArrayList<Integer> topologicalOrder();
+	
+	/**
+	* Find the shortest path from the source node
+	* in a weight graph using Dijkstra's Algorithm
+	*
+	* @param	start	the start node
+	* @return	dijkstra's shortest paths
+	*/
+	public abstract double[] dijkstra(int start, int dest);
 }

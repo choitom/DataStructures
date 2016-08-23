@@ -138,10 +138,20 @@ public class AdjacencyMatrix extends AbstractGraph{
 		}
 	}
 	
+	/**
+	* Find the shortest path from the source node
+	* in a weight graph using Dijkstra's Algorithm
+	*
+	* @param	start	the start node
+	* @return	dijkstra's shortest paths
+	*/
+	public double[] dijkstra(int start, int dest){
+		return null;
+	}
 	
 	/** Test Code using Carleton College CS Courses */
 	public static void main(String[] args) throws FileNotFoundException{
-		Scanner scan = new Scanner(new File("graph1.txt"));
+		Scanner scan = new Scanner(new File("CSCourses.txt"));
 		AdjacencyMatrix g = new AdjacencyMatrix(scan);
 		
 		/** Topological Ordering of Carleton College CS Courses*/

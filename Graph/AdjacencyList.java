@@ -108,38 +108,148 @@ public class AdjacencyList extends AbstractGraph{
 		return topoOrder;
 	}
 	
+	/**
+	* Find the shortest path from the source node
+	* in a weight graph using Dijkstra's Algorithm
+	* It also prints out path to from start to destination
+	*
+	* @param	start	the start node
+	* @return	dijkstra's shortest paths
+	*/
+	public double[] dijkstra(int start, int dest){
+		if(!checkValidInput(start, dest)){
+			System.err.println("Check for valid start and destination nodes!");
+			return null;
+		}
+		
+		/** Initailize Predecessor(P set) */
+		int[] P = new int[numNodes];
+		for(int i = 0; i < P.length; i++){
+			P[i] = start;
+		}
+		
+		/** Initialize S set*/
+		HashSet<Integer> S = new HashSet<Integer>();
+		S.add(start);
+		
+		/** Initialize V-S set */
+		HashSet<Integer> VS = new HashSet<Integer>();
+		for(int i = 0; i < numNodes; i++){
+			if(i != start){
+				VS.add(i);
+			}
+		}
+		
+		/** Initialize weighted array with max integers */
+		double[] weight = new double[numNodes];
+		for(int i = 0; i < weight.length; i++){
+			weight[i] = MAX;
+		}
+		
+		/** Set start to 0 and initialize its adjacent nodes */
+		weight[start] = 0;
+		LinkedList<Edge> startAdj = map.get(start);
+		for(Edge e : startAdj){
+			weight[e.getDest()] = e.getWeight();
+		}
+		
+		/** While V-S not empty */
+		while(!VS.isEmpty()){
+			
+			/** Find the node with the smallest weight */
+			int minNode = findMinNode(VS, weight);
+			VS.remove(minNode);		// remove from V-S
+			S.add(minNode);			// add to S
+			
+			/** For each node adjcaent to minNode */
+			LinkedList<Edge> adj = map.get(minNode);
+			if(adj != null){
+				for(Edge e : adj){
+					int adjNode = e.getDest();
+					
+					/** If new weight is greater than the old one, replace it*/
+					if(weight[adjNode] > weight[minNode] + e.getWeight()){
+						weight[adjNode] = weight[minNode] + e.getWeight();
+						P[adjNode] = minNode;
+					}
+				}
+			}
+		}
+		printPath(P, start, dest);
+		return weight;
+	}
+	
+	/**
+	* Prints the path from start to destination
+	*/
+	private void printPath(int[] P, int start, int dest){
+		ArrayList<Integer> pathList = new ArrayList<Integer>();
+		while(dest != start){
+			pathList.add(dest);
+			dest = P[dest];
+		}
+		pathList.add(start);
+		for(int i = pathList.size()-1; i >= 0; i--){
+			System.out.print(pathList.get(i));
+			if(i != 0){
+				System.out.print(" -> ");
+			}
+		}System.out.println();
+	}
+	
+	/**
+	* Find the minimum node with the minimum weight from V-S set
+	* 
+	* @param	VS			V-S set
+	* @param	weight		the array of weights
+	* @return	minimum node
+	*/
+	private int findMinNode(HashSet<Integer> VS, double[] weight){
+		double min = -1;
+		int minNode = -1;
+		for(int node : VS){
+			if(min == -1 && minNode == -1){
+				minNode = node;
+				min = weight[minNode];
+			}else if(weight[node] < min){
+				minNode = node;
+				min = weight[minNode];
+			}
+		}
+		return minNode;
+	}
+	
+	/**
+	* Nicely prinout an array
+	*
+	* @param	array to print out
+	*/
+	public void printDijkstra(double[] weight){
+		for(int i = 0; i < weight.length; i++){
+			if(weight[i] != MAX){
+				System.out.print("[" + weight[i] + "] ");
+			}else{
+				System.out.print("[MAX] ");
+			}
+		}System.out.println();
+	}
+	
+	
+	/**
+	* Check for valid start and destination nodes
+	*/
+	private boolean checkValidInput(int start, int dest){
+		if(!(start >= 0 && dest >=0 && start < numNodes && dest < numNodes)){
+			return false;
+		}return true;
+	}
+	
 	/** Test Code using Carleton College CS courses*/
 	public static void main(String[] args) throws FileNotFoundException{
-		Scanner s = new Scanner(new File("graph1.txt"));
+		Scanner s = new Scanner(new File("WeightGraph.txt"));
 		AdjacencyList g = new AdjacencyList(s);
 		
-		/** Topological Ordering of Carleton College CS Courses*/
-		String[] courses = {"Intro To CS", "Data Structures", "Math of CS",
-							"Comp Org&Arc", "Software Design", "Programming Languages",
-							"Natural Language Processing", "Computational Biology",
-							"Parallel Dist. Comp.", "OS", "Comp Models of Cogn",
-							"Diginal Electornics", "Computer Networks",
-							"Algorithm", "Computing&Complexity"};
-		
-		/** Breath First Search */
-		System.out.println("****Breath First Search****");
-		ArrayList<Integer> bfs = g.BFS(0);
-		for(int i = 0; i < bfs.size(); i++){
-			System.out.print("[" + courses[bfs.get(i)] + "] ");
-		}System.out.println("\n--------------------------------------------------------------------------");
-		
-		/** Depth First Search */
-		System.out.println("****Depth First Search****");
-		ArrayList<Integer> dfs = g.DFS(0);
-		for(int i = 0; i < dfs.size(); i++){
-			System.out.print("[" + courses[dfs.get(i)] + "] ");
-		}System.out.println("\n--------------------------------------------------------------------------");
-		
-		/** Topological ordering */
-		System.out.println("****Topological Ordering****");
-		ArrayList<Integer> topo = g.topologicalOrder();
-		for(int i = 0; i < topo.size(); i++){
-			System.out.print("[" + courses[topo.get(i)] + "] ");
-		}System.out.println("\n--------------------------------------------------------------------------");
+		double[] weightPath = g.dijkstra(0, 4);
+		g.printDijkstra(weightPath);
 	}
 }
