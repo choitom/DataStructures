@@ -19,7 +19,7 @@ public abstract class AbstractGraph{
 	protected int numNodes;
 	protected int[] incomingEdges;
 	protected boolean[] visited;
-	protected final int MAX = Integer.MAX_VALUE;
+	protected final double MAX = Double.MAX_VALUE;
 	
 	public AbstractGraph(Scanner scan){
 		readGraphFile(scan);
@@ -92,6 +92,43 @@ public abstract class AbstractGraph{
 			}
 		}
 		return lst;
+	}
+	
+	/**
+	* Find the node with the minimum weight in V-S set
+	*
+	* @param	VS			V-S set
+	* @param	weight		weight array
+	* @return	node with minimum weight
+	*/
+	protected int findMinNode(HashSet<Integer> VS, double[] weight){
+		int minNode = Integer.MAX_VALUE;
+		double min = MAX;
+		for(int node : VS){
+			if(weight[node] < min){
+				min = weight[node];
+				minNode = node;
+			}
+		}
+		return minNode;
+	}
+	
+	/**
+	* Prints the path from start to destination
+	*/
+	protected void printPath(int[] P, int start, int dest){
+		ArrayList<Integer> pathList = new ArrayList<Integer>();
+		while(dest != start){
+			pathList.add(dest);
+			dest = P[dest];
+		}
+		pathList.add(start);
+		for(int i = pathList.size()-1; i >= 0; i--){
+			System.out.print(pathList.get(i));
+			if(i != 0){
+				System.out.print(" -> ");
+			}
+		}System.out.println();
 	}
 	
 	/**

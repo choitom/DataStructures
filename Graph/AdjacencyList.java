@@ -128,10 +128,6 @@ public class AdjacencyList extends AbstractGraph{
 			P[i] = start;
 		}
 		
-		/** Initialize S set*/
-		HashSet<Integer> S = new HashSet<Integer>();
-		S.add(start);
-		
 		/** Initialize V-S set */
 		HashSet<Integer> VS = new HashSet<Integer>();
 		for(int i = 0; i < numNodes; i++){
@@ -159,7 +155,6 @@ public class AdjacencyList extends AbstractGraph{
 			/** Find the node with the smallest weight */
 			int minNode = findMinNode(VS, weight);
 			VS.remove(minNode);		// remove from V-S
-			S.add(minNode);			// add to S
 			
 			/** For each node adjcaent to minNode */
 			LinkedList<Edge> adj = map.get(minNode);
@@ -179,48 +174,6 @@ public class AdjacencyList extends AbstractGraph{
 		return weight;
 	}
 	
-	/**
-	* Prints the path from start to destination
-	*/
-	private void printPath(int[] P, int start, int dest){
-		ArrayList<Integer> pathList = new ArrayList<Integer>();
-		while(dest != start){
-			pathList.add(dest);
-			dest = P[dest];
-		}
-		pathList.add(start);
-		for(int i = pathList.size()-1; i >= 0; i--){
-			System.out.print(pathList.get(i));
-			if(i != 0){
-				System.out.print(" -> ");
-			}
-		}System.out.println();
-	}
-	
-	/**
-	* Find the minimum node with the minimum weight from V-S set
-	* 
-	* @param	VS			V-S set
-	* @param	weight		the array of weights
-	* @return	minimum node
-	*/
-	private int findMinNode(HashSet<Integer> VS, double[] weight){
-		double min = -1;
-		int minNode = -1;
-		for(int node : VS){
-			if(min == -1 && minNode == -1){
-				minNode = node;
-				min = weight[minNode];
-			}else if(weight[node] < min){
-				minNode = node;
-				min = weight[minNode];
-			}
-		}
-		return minNode;
-	}
-	
-	
-	
 	/** Test Code */
 	public static void main(String[] args) throws FileNotFoundException{
 		Scanner s = new Scanner(new File("WeightGraph.txt"));
@@ -228,7 +181,7 @@ public class AdjacencyList extends AbstractGraph{
 		testGraph(graph);
 	}
 	
-	public static void testGraph(AbstractGraph graph){
+	private static void testGraph(AbstractGraph graph){
 		double[] weightPath = graph.dijkstra(0, 4);
 		print(graph.BFS(0));
 		print(graph.DFS(0));

@@ -150,7 +150,51 @@ public class AdjacencyMatrix extends AbstractGraph{
 			System.err.println("Check for valid start and destination node!");
 			return null;
 		}
-		return null;
+		
+		/** Initialize Predecessor(P set) */
+		int[] P = new int[numNodes];
+		for(int i = 0; i < P.length; i++){
+			P[i] = start;
+		}
+		
+		/** Initialize V-S set*/
+		HashSet<Integer> VS = new HashSet<Integer>();
+		for(int i = 0; i < numNodes; i++){
+			if(i != start){
+				VS.add(i);
+			}
+		}
+		
+		/** Initialize weight array with max integers */
+		double[] weight = new double[numNodes];
+		for(int i = 0; i < weight.length; i++){
+			weight[i] = MAX;
+		}
+		
+		/** Set the weights of start and its adjacent nodes */
+		weight[start] = 0;
+		for(int i = 0; i < matrix[start].length; i++){
+			if(matrix[start][i] > 0){
+				weight[i] = matrix[start][i];
+			}
+		}
+		
+		while(!VS.isEmpty()){
+			int minNode = findMinNode(VS, weight);
+			VS.remove(minNode);		// remove from V-S set
+			
+			/** for each adjacent node */
+			for(int i = 0; i < matrix[minNode].length; i++){
+				if(matrix[minNode][i] > 0){
+					if(weight[i] > weight[minNode] + matrix[minNode][i]){
+						weight[i] = weight[minNode] + matrix[minNode][i];
+						P[i] = minNode;		// store the parent node
+					}
+				}
+			}
+		}
+		printPath(P, start, dest);
+		return weight;
 	}
 	
 	/** Test Code using Carleton College CS Courses */
@@ -158,9 +202,13 @@ public class AdjacencyMatrix extends AbstractGraph{
 		Scanner scan = new Scanner(new File("CSCourses.txt"));
 		AdjacencyMatrix graph = new AdjacencyMatrix(scan);
 		CarletonCSCourses(graph);
+		
+		scan = new Scanner(new File("WeightGraph.txt"));
+		graph = new AdjacencyMatrix(scan);
+		double[] dijkstra = graph.dijkstra(0,4);
 	}
 	
-	public static void CarletonCSCourses(AbstractGraph graph){
+	private static void CarletonCSCourses(AbstractGraph graph){
 		/** Topological Ordering of Carleton College CS Courses*/
 		String[] courses = {"Intro To CS", "Data Structures", "Math of CS",
 							"Comp Org&Arc", "Software Design", "Programming Languages",
