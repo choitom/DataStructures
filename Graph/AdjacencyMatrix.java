@@ -146,14 +146,21 @@ public class AdjacencyMatrix extends AbstractGraph{
 	* @return	dijkstra's shortest paths
 	*/
 	public double[] dijkstra(int start, int dest){
+		if(!checkValidInput(start, dest)){
+			System.err.println("Check for valid start and destination node!");
+			return null;
+		}
 		return null;
 	}
 	
 	/** Test Code using Carleton College CS Courses */
 	public static void main(String[] args) throws FileNotFoundException{
 		Scanner scan = new Scanner(new File("CSCourses.txt"));
-		AdjacencyMatrix g = new AdjacencyMatrix(scan);
-		
+		AdjacencyMatrix graph = new AdjacencyMatrix(scan);
+		CarletonCSCourses(graph);
+	}
+	
+	public static void CarletonCSCourses(AbstractGraph graph){
 		/** Topological Ordering of Carleton College CS Courses*/
 		String[] courses = {"Intro To CS", "Data Structures", "Math of CS",
 							"Comp Org&Arc", "Software Design", "Programming Languages",
@@ -162,25 +169,14 @@ public class AdjacencyMatrix extends AbstractGraph{
 							"Diginal Electornics", "Computer Networks",
 							"Algorithm", "Computing&Complexity"};
 		
-		/** Breath First Search */
-		System.out.println("****Breath First Search****");
-		ArrayList<Integer> bfs = g.BFS(0);
-		for(int i = 0; i < bfs.size(); i++){
-			System.out.print("[" + courses[bfs.get(i)] + "] ");
-		}System.out.println("\n--------------------------------------------------------------------------");
-		
-		/** Depth First Search */
-		System.out.println("****Depth First Search****");
-		ArrayList<Integer> dfs = g.DFS(0);
-		for(int i = 0; i < dfs.size(); i++){
-			System.out.print("[" + courses[dfs.get(i)] + "] ");
-		}System.out.println("\n--------------------------------------------------------------------------");
-		
-		/** Topological ordering */
-		System.out.println("****Topological Ordering****");
-		ArrayList<Integer> topo = g.topologicalOrder();
-		for(int i = 0; i < topo.size(); i++){
-			System.out.print("[" + courses[topo.get(i)] + "] ");
-		}System.out.println("\n--------------------------------------------------------------------------");
+		coursePrint(graph.BFS(0), courses);
+		coursePrint(graph.DFS(0), courses);
+		coursePrint(graph.topologicalOrder(), courses);
+	}
+	
+	private static void coursePrint(ArrayList<Integer> arr, String[] courses){
+		for(int i = 0; i < arr.size(); i++){
+			System.out.print("[" + courses[arr.get(i)] + "] ");
+		}System.out.println();
 	}
 }

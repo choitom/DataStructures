@@ -219,14 +219,6 @@ public class AdjacencyList extends AbstractGraph{
 		return minNode;
 	}
 	
-	/**
-	* Check for valid start and destination nodes
-	*/
-	private boolean checkValidInput(int start, int dest){
-		if(!(start >= 0 && dest >=0 && start < numNodes && dest < numNodes)){
-			return false;
-		}return true;
-	}
 	
 	
 	/** Test Code */
@@ -243,7 +235,7 @@ public class AdjacencyList extends AbstractGraph{
 		print(graph.topologicalOrder());
 	}
 	
-	public static void print(ArrayList<Integer> arr){
+	private static void print(ArrayList<Integer> arr){
 		for(int i = 0; i < arr.size(); i++){
 			System.out.print(arr.get(i) + " ");
 		}System.out.println();

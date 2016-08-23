@@ -95,6 +95,15 @@ public abstract class AbstractGraph{
 	}
 	
 	/**
+	* Check for valid start and destination nodes
+	*/
+	protected boolean checkValidInput(int start, int dest){
+		if(!(start >= 0 && dest >=0 && start < numNodes && dest < numNodes)){
+			return false;
+		}return true;
+	}
+	
+	/**
 	* Run DFS on the start node
 	*/
 	private boolean isAcyclicHelper(int start){
