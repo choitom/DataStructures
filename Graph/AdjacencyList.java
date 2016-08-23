@@ -220,22 +220,6 @@ public class AdjacencyList extends AbstractGraph{
 	}
 	
 	/**
-	* Nicely prinout an array
-	*
-	* @param	array to print out
-	*/
-	public void printDijkstra(double[] weight){
-		for(int i = 0; i < weight.length; i++){
-			if(weight[i] != MAX){
-				System.out.print("[" + weight[i] + "] ");
-			}else{
-				System.out.print("[MAX] ");
-			}
-		}System.out.println();
-	}
-	
-	
-	/**
 	* Check for valid start and destination nodes
 	*/
 	private boolean checkValidInput(int start, int dest){
@@ -248,11 +232,20 @@ public class AdjacencyList extends AbstractGraph{
 	/** Test Code */
 	public static void main(String[] args) throws FileNotFoundException{
 		Scanner s = new Scanner(new File("WeightGraph.txt"));
-		AbstractGraph g = new AdjacencyList(s);
+		AbstractGraph graph = new AdjacencyList(s);
+		testGraph(graph);
 	}
 	
 	public static void testGraph(AbstractGraph graph){
 		double[] weightPath = graph.dijkstra(0, 4);
-		g.printDijkstra(weightPath);
+		print(graph.BFS(0));
+		print(graph.DFS(0));
+		print(graph.topologicalOrder());
+	}
+	
+	public static void print(ArrayList<Integer> arr){
+		for(int i = 0; i < arr.size(); i++){
+			System.out.print(arr.get(i) + " ");
+		}System.out.println();
 	}
 }
