@@ -5,6 +5,10 @@
 	Implemenetaion of BFS, DFS and Topological Sort
 	for the graph represented by the adjacency matrix
 	which uses Java built-in hash map.
+	
+	NOTE
+	There exist redundant codes in order to pratice
+	coding by keep writing codes over again.
 */
 
 import java.util.*;
@@ -174,10 +178,94 @@ public class AdjacencyList extends AbstractGraph{
 		return weight;
 	}
 	
+	/**
+	* Find the edges of the minimum spanning tree
+	* found by Prim's Algorithm
+	*
+	* @param	start	the start node
+	* @return	the set of edges in the MST
+	*/
+	public ArrayList<Edge> primMST(int start){
+
+		/** Check for valid input */
+		if(start < 0 || start >= numNodes){
+			System.err.println("The start node is not valid!");
+			return null;
+		}
+		
+		/** Initialize P set */
+		int[] P = new int[numNodes];
+		for(int i = 0; i < P.length; i++){
+			P[i] = start;
+		}
+		
+		/** Initialize S set*/
+		HashSet<Integer> S = new HashSet<Integer>();
+		S.add(start);
+		
+		/** Initialize V-S set */
+		HashSet<Integer> VS = new HashSet<Integer>();
+		for(int i = 0; i < numNodes; i++){
+			if(i != start){
+				VS.add(i);
+			}
+		}
+		
+		/** Initialize the set of weights */
+		double[] weight = new double[numNodes];
+		for(int i = 0; i < weight.length; i++){
+			weight[i] = MAX;
+		}
+		
+		/** Set the weights of start and its adjacent nodes */
+		weight[start] = 0;
+		LinkedList<Edge> adj = map.get(start);
+		for(Edge e : adj){
+			weight[e.getDest()] = e.getWeight();
+		}
+		
+		/** While V-S set is not empty*/
+		ArrayList<Edge> mst = new ArrayList<Edge>();
+		while(!VS.isEmpty()){
+			int minNode = findMinNode(VS, weight);
+			VS.remove(minNode);
+			S.add(minNode);
+			
+			/** insert the edge into mst */
+			LinkedList<Edge> edges = map.get(P[minNode]);
+			if(edges != null){
+				for(Edge e : edges){
+					if(e.getSrc() == P[minNode] && e.getDest() == minNode){
+						mst.add(e);
+					}
+				}
+			}
+			
+			/** update edge values from S to V-S set */
+			for(int node : S){
+				LinkedList<Edge> adjEdges = map.get(node);
+				if(adjEdges != null){
+					for(Edge e : adjEdges){
+						if(weight[e.getDest()] > e.getWeight()){
+							weight[e.getDest()] = e.getWeight();
+							P[e.getDest()] = node;
+						}
+					}
+				}
+			}
+		}
+		return mst;
+	}
+	
+	
 	/** Test Code */
 	public static void main(String[] args) throws FileNotFoundException{
 		Scanner s = new Scanner(new File("WeightGraph.txt"));
 		AbstractGraph graph = new AdjacencyList(s);
+		ArrayList<Edge> mst = graph.primMST(0);
+		for(int i = 0; i < mst.size(); i++){
+			System.out.print(mst.get(i).toString() + " ");
+		}System.out.println();
 		testGraph(graph);
 	}
 	

@@ -266,4 +266,13 @@ public abstract class AbstractGraph{
 	* @return	dijkstra's shortest paths
 	*/
 	public abstract double[] dijkstra(int start, int dest);
+	
+	/**
+	* Find the edges of the minimum spanning tree
+	* found by Prim's Algorithm
+	*
+	* @param	start	the start node
+	* @return	the set of edges in the MST
+	*/
+	public abstract ArrayList<Edge> primMST(int start);
 }

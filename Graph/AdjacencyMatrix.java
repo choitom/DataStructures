@@ -197,15 +197,84 @@ public class AdjacencyMatrix extends AbstractGraph{
 		return weight;
 	}
 	
+	/**
+	* Find the edges of the minimum spanning tree
+	* found by Prim's Algorithm
+	*
+	* @param	start	the start node
+	* @return	the set of edges in the MST
+	*/
+	public ArrayList<Edge> primMST(int start){
+		/** P set */
+		int[] P = new int[numNodes];
+		for(int i = 0; i < P.length; i++){
+			P[i] = start;
+		}
+			
+		/** S set */
+		HashSet<Integer> S = new HashSet<Integer>();
+		S.add(start);
+		
+		/** VS set*/
+		HashSet<Integer> VS = new HashSet<Integer>();
+		for(int i = 0; i < numNodes; i++){
+			if(i != start){
+				VS.add(i);
+			}
+		}
+			
+		/** Weight set */
+		double[] weight = new double[numNodes];
+		for(int i = 0; i < numNodes; i++){
+			weight[i] = MAX;
+		}
+			
+		/** Set the weights of start and its adjcent nodes */
+		weight[start] = 0;
+		for(int i = 0; i < matrix[start].length; i++){
+			if(matrix[start][i] > 0){
+				weight[i] = matrix[start][i];
+			}
+		}
+		
+		/** While V-S set is not empty */
+		ArrayList<Edge> mst = new ArrayList<Edge>();
+		while(!VS.isEmpty()){
+			int minNode = findMinNode(VS, weight);
+			VS.remove(minNode);
+			S.add(minNode);
+			
+			/** Edge the edge with the smallest weight */
+			mst.add(new Edge(P[minNode], minNode, matrix[P[minNode]][minNode]));
+			
+			/** Update edge weights from S to V-S set*/
+			for(int node : S){
+				for(int i = 0; i < matrix[node].length; i++){
+					if(weight[i] > matrix[node][i] && matrix[node][i] > 0){
+						weight[i] = matrix[node][i];
+						P[i] = node;
+					}
+				}
+			}
+		}
+		return mst;
+	}
+	
 	/** Test Code using Carleton College CS Courses */
 	public static void main(String[] args) throws FileNotFoundException{
 		Scanner scan = new Scanner(new File("CSCourses.txt"));
 		AdjacencyMatrix graph = new AdjacencyMatrix(scan);
-		CarletonCSCourses(graph);
+		//CarletonCSCourses(graph);
 		
 		scan = new Scanner(new File("WeightGraph.txt"));
 		graph = new AdjacencyMatrix(scan);
-		double[] dijkstra = graph.dijkstra(0,4);
+		
+		ArrayList<Edge> mst = graph.primMST(0);
+		for(int i = 0; i < mst.size(); i++){
+			System.out.print(mst.get(i).toString() + " ");
+		}System.out.println();
+		
+		//double[] dijkstra = graph.dijkstra(0,4);
 	}
 	
 	private static void CarletonCSCourses(AbstractGraph graph){
