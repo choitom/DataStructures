@@ -18,4 +18,4 @@ So far implemented:
   - Hash Set & Map using a Hash Table
   - Sort -> Bubble, Selection, Insertion, Merge, Quick
   - AVL Tree
-  - Adjacency List & Matrix : BFS, DFS, Topological Sort, Dijkstra
+  - Adjacency List & Matrix : BFS, DFS, Topological Sort, Dijkstra, Prim's MST
